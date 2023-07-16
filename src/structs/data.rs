@@ -18,7 +18,7 @@ impl Data {
 
 pub struct Task1Data {
 	pub plot_width: f64,
-	pub points: Vec<(f64, f64, Color32, String)>,
+	pub points: Vec<(f64, f64, Color32, String, usize)>,
 	pub r_squared: f64,
 	pub slope: f64,
 }
@@ -34,14 +34,26 @@ impl Task1Data {
 	}
 
 	fn init(&mut self, planetary_system: &crate::structs::PlanetarySystem, active_groups: &HashMap<String, bool>) {
+		let mut points_all = Vec::new();
+		for object in &planetary_system.objects {
+			points_all.push((
+				object.distance_au.powf(1.5),
+				object.period_years,
+				object.colour,
+				object.name.clone(),
+				*active_groups.get(&object.group).unwrap_or(&true),
+			));
+		}
+		points_all.sort_by(|a, b| a.0.total_cmp(&b.0));
 		let mut points = Vec::new();
 		let mut vals = Vec::new();
-		for object in &planetary_system.objects {
-			if !*active_groups.get(&object.group).unwrap_or(&true) {
+		for (i, (distance, period, colour, name, active)) in points_all.iter().enumerate() {
+			if !*active {
 				continue;
 			}
-			points.push((object.distance_au.powf(1.5), object.period_years, object.colour, object.name.clone()));
-			vals.push((object.distance_au.powf(1.5), object.period_years));
+			let (&distance, &period, &colour) = (distance, period, colour);
+			points.push((distance, period, colour, name.clone(), i));
+			vals.push((distance, period));
 		}
 		self.points = points;
 		let mut sum_y = 0.0;

@@ -35,7 +35,7 @@ impl Application {
 			let radius = self.data.task_1_data.plot_width * PLANETS_RADIUS_FRACTION;
 			let mut min_x = f64::INFINITY;
 			let mut max_x = f64::NEG_INFINITY;
-			for (x, y, colour, name) in &self.data.task_1_data.points {
+			for (x, y, colour, name, index) in &self.data.task_1_data.points {
 				let (&x, &y, &colour) = (x, y, colour);
 				object_points.push(egui::plot::Points::new(vec![[x, y]]).color(colour).highlight(true));
 				let circle_points: egui::plot::PlotPoints = (0..=PLANETS_CIRCLE_POINTS)
@@ -45,7 +45,7 @@ impl Application {
 						[r * t.cos() + x, r * t.sin() + y]
 					})
 					.collect();
-				object_lines.push(egui::plot::Line::new(circle_points).color(colour).highlight(true).name(name.to_owned()));
+				object_lines.push(egui::plot::Line::new(circle_points).color(colour).highlight(true).name(format!("[{}] {}", index, name.to_owned())));
 				object_lines.push(egui::plot::Line::new(egui::plot::PlotPoints::new(vec![[x - radius, y], [x + radius, y]])).color(colour).highlight(true));
 				object_lines.push(egui::plot::Line::new(egui::plot::PlotPoints::new(vec![[x, y - radius], [x, y + radius]])).color(colour).highlight(true));
 				if x > max_x {
