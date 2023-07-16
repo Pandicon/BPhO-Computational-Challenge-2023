@@ -97,6 +97,7 @@ impl eframe::App for Application {
 		self.render_top_panel(ctx);
 		match self.chosen_task {
 			Task::Task1 => self.render_task_1(ctx),
+			Task::Task2 => self.render_task_2(ctx),
 		}
 		ctx.request_repaint();
 	}
