@@ -11,6 +11,7 @@ const PLANETARY_SYSTEMS_NAMES_FILE: &str = "./data/planetary-systems-names.csv";
 const PLANETARY_SYSTEMS_FOLDER: &str = "./data/planetary-systems";
 
 pub struct Application {
+	pub active_groups: Vec<HashMap<String, bool>>,
 	pub planetary_systems: Vec<structs::PlanetarySystem>,
 	pub chosen_system: usize,
 	pub chosen_task: enums::Task,
@@ -78,6 +79,7 @@ impl Application {
 		data.init_task_1(&planetary_systems[chosen_system], &active_groups[chosen_system]);
 
 		Self {
+			active_groups,
 			planetary_systems,
 			chosen_system,
 			chosen_task: Task::Task1,
