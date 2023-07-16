@@ -17,12 +17,13 @@ impl Data {
 }
 
 pub struct Task1Data {
+	pub plot_width: f64,
 	pub points: Vec<(f64, f64, Color32)>,
 }
 
 impl Task1Data {
 	pub fn new() -> Self {
-		Self { points: Vec::new() }
+		Self { plot_width: 1.0, points: Vec::new() }
 	}
 
 	fn init(&mut self, planetary_system: &crate::structs::PlanetarySystem, active_groups: &HashMap<String, bool>) {
