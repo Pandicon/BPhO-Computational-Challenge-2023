@@ -1,2 +1,11 @@
 name,distance_km,period_years,group,colour
 Sun,0,0,star,FFF959FF
+Mercury,57909176,0.241,inner planets,969696FF
+Venus,108208926,0.615,inner planets,B28759FF
+Earth,149597887,1.0,inner planets,5F7DA9FF
+Mars,227936637,1.88,inner planets,D1532AFF
+Jupiter,778412027,11.9,outer planets,E7AA7AFF
+Saturn,1426725413,29.5,outer planets,DEBD7CFF
+Uranus,2870972220,84.0,outer planets,BDDBDFFF
+Neptune,4498252900,165.0,outer planets,93B5E4FF
+Pluto,5893108920,247.41,dwarf planets,B57E7DFF
