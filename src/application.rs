@@ -1,0 +1,97 @@
+use std::{collections::HashMap, fs};
+
+use eframe::{self, egui};
+
+use crate::{
+	enums::{self, Task},
+	structs,
+};
+
+const PLANETARY_SYSTEMS_NAMES_FILE: &str = "./data/planetary-systems-names.csv";
+const PLANETARY_SYSTEMS_FOLDER: &str = "./data/planetary-systems";
+
+pub struct Application {
+	pub planetary_systems: Vec<structs::PlanetarySystem>,
+	pub chosen_system: usize,
+	pub chosen_task: enums::Task,
+	pub data: structs::Data,
+}
+
+impl Application {
+	pub fn init(cc: &eframe::CreationContext<'_>) -> Self {
+		cc.egui_ctx.set_visuals(egui::Visuals::dark());
+
+		let chosen_system = 0;
+
+		let mut planetary_systems_names = HashMap::new();
+		if let Ok(mut reader) = csv::Reader::from_path(PLANETARY_SYSTEMS_NAMES_FILE) {
+			for name_data_raw in reader.deserialize::<[String; 2]>() {
+				if let Ok(name_data) = name_data_raw {
+					let [filename, name] = name_data;
+					planetary_systems_names.insert(filename, name);
+				}
+			}
+		}
+
+		let mut planetary_systems = Vec::new();
+		if let Ok(files) = fs::read_dir(PLANETARY_SYSTEMS_FOLDER) {
+			for file in files.flatten() {
+				let path = file.path();
+				let file_name = path.file_name();
+				if file_name.is_none() {
+					continue;
+				}
+				let file_name = file_name.unwrap().to_str();
+				if file_name.is_none() {
+					continue;
+				}
+				let file_name = file_name.unwrap().to_string();
+
+				let mut system_objects = Vec::new();
+				if let Ok(mut reader) = csv::Reader::from_path(file.path()) {
+					for planetary_object_raw in reader.deserialize::<structs::PlanetaryObjectRaw>() {
+						if let Ok(planetary_object_raw) = planetary_object_raw {
+							system_objects.push(structs::PlanetaryObject::from_raw(planetary_object_raw));
+						}
+					}
+				}
+				if !system_objects.is_empty() {
+					let name = if let Some(name) = planetary_systems_names.get(&file_name) { name.to_owned() } else { file_name };
+					planetary_systems.push(structs::PlanetarySystem::new(system_objects, name));
+				}
+			}
+		}
+		if planetary_systems.is_empty() {
+			panic!("No planetary systems could be loaded");
+		}
+		planetary_systems.sort_by(|a, b| b.name.cmp(&a.name));
+		let mut active_groups = Vec::new();
+		for planetary_system in &planetary_systems {
+			let mut active_groups_system = HashMap::new();
+			for object in &planetary_system.objects {
+				active_groups_system.insert(object.group.to_owned(), true);
+			}
+			active_groups.push(active_groups_system);
+		}
+
+		let mut data = structs::Data::new();
+		data.init_task_1(&planetary_systems[chosen_system], &active_groups[chosen_system]);
+
+		Self {
+			planetary_systems,
+			chosen_system,
+			chosen_task: Task::Task1,
+			data,
+		}
+	}
+}
+
+impl eframe::App for Application {
+	fn update(&mut self, ctx: &eframe::egui::Context, _frame: &mut eframe::Frame) {
+		self.render_top_panel(ctx);
+		match self.chosen_task {
+			Task::Task1 => self.render_task_1(ctx),
+		}
+		ctx.request_repaint();
+	}
+}
