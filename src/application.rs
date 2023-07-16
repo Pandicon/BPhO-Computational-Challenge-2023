@@ -16,6 +16,7 @@ pub struct Application {
 	pub chosen_system: usize,
 	pub chosen_task: enums::Task,
 	pub data: structs::Data,
+	pub show_loaded_systems: bool,
 }
 
 impl Application {
@@ -80,12 +81,14 @@ impl Application {
 			chosen_system,
 			chosen_task: Task::Task1,
 			data,
+			show_loaded_systems: false,
 		}
 	}
 }
 
 impl eframe::App for Application {
 	fn update(&mut self, ctx: &eframe::egui::Context, _frame: &mut eframe::Frame) {
+		self.render_loaded_systems_window(ctx);
 		self.render_top_panel(ctx);
 		match self.chosen_task {
 			Task::Task1 => self.render_task_1(ctx),

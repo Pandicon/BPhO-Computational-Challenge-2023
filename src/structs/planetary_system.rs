@@ -18,6 +18,7 @@ pub struct PlanetaryObject {
 	pub name: String,
 	pub distance_km: f64,
 	pub distance_au: f64,
+	pub eccentricity: f64,
 	pub period_years: f64,
 	pub group: String,
 	pub colour: Color32,
@@ -29,6 +30,7 @@ impl PlanetaryObject {
 			name: planetary_object_raw.name,
 			distance_km: planetary_object_raw.distance_km,
 			distance_au: planetary_object_raw.distance_km / crate::constants::ASTRONOMICAL_UNIT_KM,
+			eccentricity: planetary_object_raw.eccentricity,
 			period_years: planetary_object_raw.period_years,
 			group: planetary_object_raw.group,
 			colour: parse_colour(planetary_object_raw.colour, Color32::WHITE),
@@ -40,6 +42,7 @@ impl PlanetaryObject {
 pub struct PlanetaryObjectRaw {
 	name: String,
 	distance_km: f64,
+	eccentricity: f64,
 	period_years: f64,
 	group: String,
 	colour: Option<String>,

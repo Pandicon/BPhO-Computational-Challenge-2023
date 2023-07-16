@@ -8,4 +8,5 @@ edition = "2021"
 [dependencies]
 csv = "1.2.2"
 eframe = "0.22.0"
+egui_extras = "0.22.0"
 serde = { version = "1.0.164", features = ["derive"] }

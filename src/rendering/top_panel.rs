@@ -10,6 +10,9 @@ impl application::Application {
 					ui.label("BPhO Computation Challenge 2023");
 				});
 				ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+					if ui.button("Show loaded planetary systems").clicked() {
+						self.show_loaded_systems = true;
+					}
 					egui::ComboBox::from_id_source("Task to show: ")
 						.selected_text(format!("{}", self.chosen_task))
 						.show_ui(ui, |ui: &mut egui::Ui| {
