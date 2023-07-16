@@ -5,7 +5,7 @@ use crate::application::Application;
 impl Application {
 	pub fn render_loaded_systems_window(&mut self, ctx: &egui::Context) -> Option<egui::InnerResponse<Option<()>>> {
 		egui::Window::new("Loaded planetary systems").open(&mut self.show_loaded_systems).show(ctx, |ui| {
-			let mut any_changed = false;
+			let mut any_colour_changed = false;
 			egui::ScrollArea::vertical().show(ui, |ui| {
 				for system in &mut self.planetary_systems {
 					egui::CollapsingHeader::new(egui::RichText::new(&system.name).text_style(egui::TextStyle::Heading).size(20.0))
@@ -76,9 +76,8 @@ impl Application {
 													(object.colour.a() as f32) / 255.0,
 												];
 												if ui.color_edit_button_rgba_unmultiplied(&mut rgba).changed() {
-													object.colour =
-														Color32::from_rgba_premultiplied((rgba[0] * 255.0) as u8, (rgba[1] * 255.0) as u8, (rgba[2] * 255.0) as u8, (rgba[3] * 255.0) as u8);
-													any_changed = true;
+													object.colour = Color32::from_rgba_unmultiplied((rgba[0] * 255.0) as u8, (rgba[1] * 255.0) as u8, (rgba[2] * 255.0) as u8, (rgba[3] * 255.0) as u8);
+													any_colour_changed = true;
 												}
 											});
 										});
@@ -87,8 +86,10 @@ impl Application {
 						});
 				}
 			});
-			if any_changed {
-				self.data.init_task_1(&self.planetary_systems[self.chosen_system], &self.active_groups[self.chosen_system]);
+			if any_colour_changed {
+				for task_i in 0..crate::enums::TASKS_NUM {
+					self.data.init_task_by_id(task_i, self.chosen_system, &self.planetary_systems, &self.active_groups);
+				}
 			}
 		})
 	}

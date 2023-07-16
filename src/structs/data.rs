@@ -2,6 +2,8 @@ use std::collections::HashMap;
 
 use eframe::epaint::Color32;
 
+use crate::{enums, structs};
+
 pub struct Data {
 	pub task_1_data: Task1Data,
 }
@@ -11,7 +13,17 @@ impl Data {
 		Self { task_1_data: Task1Data::new() }
 	}
 
-	pub fn init_task_1(&mut self, planetary_system: &crate::structs::PlanetarySystem, active_groups: &HashMap<String, bool>) {
+	pub fn init_task(&mut self, chosen_task: &enums::Task, chosen_system: usize, planetary_systems: &Vec<structs::PlanetarySystem>, active_groups: &Vec<Vec<HashMap<String, bool>>>) {
+		match *chosen_task {
+			enums::Task::Task1 => self.init_task_1(&planetary_systems[chosen_system], &active_groups[enums::Task::Task1.task_index()][chosen_system]),
+		}
+	}
+
+	pub fn init_task_by_id(&mut self, chosen_task: usize, chosen_system: usize, planetary_systems: &Vec<structs::PlanetarySystem>, active_groups: &Vec<Vec<HashMap<String, bool>>>) {
+		self.init_task(&enums::Task::from_index(chosen_task), chosen_system, planetary_systems, active_groups);
+	}
+
+	fn init_task_1(&mut self, planetary_system: &structs::PlanetarySystem, active_groups: &HashMap<String, bool>) {
 		self.task_1_data.init(planetary_system, active_groups);
 	}
 }
@@ -33,7 +45,7 @@ impl Task1Data {
 		}
 	}
 
-	fn init(&mut self, planetary_system: &crate::structs::PlanetarySystem, active_groups: &HashMap<String, bool>) {
+	fn init(&mut self, planetary_system: &structs::PlanetarySystem, active_groups: &HashMap<String, bool>) {
 		let mut points_all = Vec::new();
 		for object in &planetary_system.objects {
 			points_all.push((

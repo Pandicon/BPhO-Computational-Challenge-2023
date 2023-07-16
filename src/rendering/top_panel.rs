@@ -34,7 +34,7 @@ impl application::Application {
 						let mut any_changed = false;
 						let _ = ui.button("Choose which groups of objects should be displayed in this task");
 						let mut key_value_pairs = Vec::new();
-						for (key, value) in self.active_groups[self.chosen_system].iter_mut() {
+						for (key, value) in self.active_groups[self.chosen_task.task_index()][self.chosen_system].iter_mut() {
 							key_value_pairs.push((key, value));
 						}
 						key_value_pairs.sort_by(|a, b| a.0.cmp(b.0));
@@ -42,7 +42,7 @@ impl application::Application {
 							any_changed |= ui.checkbox(value, key).changed();
 						}
 						if any_changed {
-							self.data.init_task_1(&self.planetary_systems[self.chosen_system], &self.active_groups[self.chosen_system]);
+							self.data.init_task(&self.chosen_task, self.chosen_system, &self.planetary_systems, &self.active_groups);
 						}
 					});
 				});

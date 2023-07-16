@@ -11,7 +11,8 @@ const PLANETARY_SYSTEMS_NAMES_FILE: &str = "./data/planetary-systems-names.csv";
 const PLANETARY_SYSTEMS_FOLDER: &str = "./data/planetary-systems";
 
 pub struct Application {
-	pub active_groups: Vec<HashMap<String, bool>>,
+	/// active groups for a given system within a given task: planetary_systems[task_index][system_index]
+	pub active_groups: Vec<Vec<HashMap<String, bool>>>,
 	pub planetary_systems: Vec<structs::PlanetarySystem>,
 	pub chosen_system: usize,
 	pub chosen_task: enums::Task,
@@ -63,17 +64,21 @@ impl Application {
 			panic!("No planetary systems could be loaded");
 		}
 		planetary_systems.sort_by(|a, b| b.name.cmp(&a.name));
-		let mut active_groups = Vec::new();
+		let mut active_groups_per_task = Vec::new();
 		for planetary_system in &planetary_systems {
 			let mut active_groups_system = HashMap::new();
 			for object in &planetary_system.objects {
 				active_groups_system.insert(object.group.to_owned(), true);
 			}
-			active_groups.push(active_groups_system);
+			active_groups_per_task.push(active_groups_system);
 		}
 
+		let active_groups = vec![active_groups_per_task; crate::enums::TASKS_NUM];
+
 		let mut data = structs::Data::new();
-		data.init_task_1(&planetary_systems[chosen_system], &active_groups[chosen_system]);
+		for task_i in 0..crate::enums::TASKS_NUM {
+			data.init_task_by_id(task_i, chosen_system, &planetary_systems, &active_groups);
+		}
 
 		Self {
 			active_groups,
