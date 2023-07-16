@@ -1,9 +1,10 @@
 use std::{f64::consts::TAU, ops::RangeInclusive};
 
-use eframe::egui;
+use eframe::{egui, epaint::Color32};
 
 use crate::application::Application;
 
+const BEST_FIT_LINE_POINTS: usize = 256;
 const PLANETS_RADIUS_FRACTION: f64 = 1.0 / 200.0;
 const PLANETS_CIRCLE_POINTS: usize = 256;
 
@@ -20,12 +21,16 @@ impl Application {
 				.data_aspect(1.0)
 				.x_axis_formatter(x_fmt)
 				.y_axis_formatter(y_fmt)
-				.label_formatter(label_fmt);
+				.label_formatter(label_fmt)
+				.legend(egui::plot::Legend::default());
 
 			let mut object_points = Vec::new();
 			let mut object_lines = Vec::new();
 			let radius = self.data.task_1_data.plot_width * PLANETS_RADIUS_FRACTION;
-			for &(x, y, colour) in &self.data.task_1_data.points {
+			let mut min_x = f64::INFINITY;
+			let mut max_x = f64::NEG_INFINITY;
+			for (x, y, colour, name) in &self.data.task_1_data.points {
+				let (&x, &y, &colour) = (x, y, colour);
 				object_points.push(egui::plot::Points::new(vec![[x, y]]).color(colour).highlight(true));
 				let circle_points: egui::plot::PlotPoints = (0..=PLANETS_CIRCLE_POINTS)
 					.map(|i| {
@@ -34,12 +39,26 @@ impl Application {
 						[r * t.cos() + x, r * t.sin() + y]
 					})
 					.collect();
-				object_lines.push(egui::plot::Line::new(circle_points).color(colour).highlight(true));
+				object_lines.push(egui::plot::Line::new(circle_points).color(colour).highlight(true).name(name.to_owned()));
 				object_lines.push(egui::plot::Line::new(egui::plot::PlotPoints::new(vec![[x - radius, y], [x + radius, y]])).color(colour).highlight(true));
 				object_lines.push(egui::plot::Line::new(egui::plot::PlotPoints::new(vec![[x, y - radius], [x, y + radius]])).color(colour).highlight(true));
+				if x > max_x {
+					max_x = x;
+				}
+				if x < min_x {
+					min_x = x;
+				}
 			}
+			let best_fit_points: egui::plot::PlotPoints = (0..=BEST_FIT_LINE_POINTS)
+				.map(|i| {
+					let x = eframe::emath::remap(i as f64, 0.0..=(BEST_FIT_LINE_POINTS as f64), min_x..=max_x);
+					[x, self.data.task_1_data.slope * x]
+				})
+				.collect();
+			let best_fit_line = egui::plot::Line::new(best_fit_points).color(Color32::RED).name(format!("y = {}x", self.data.task_1_data.slope));
 			let plot_bounds = plot
 				.show(ui, |plot_ui| {
+					plot_ui.line(best_fit_line);
 					for line in object_lines {
 						plot_ui.line(line);
 					}
