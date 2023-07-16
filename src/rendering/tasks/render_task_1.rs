@@ -55,7 +55,9 @@ impl Application {
 					[x, self.data.task_1_data.slope * x]
 				})
 				.collect();
-			let best_fit_line = egui::plot::Line::new(best_fit_points).color(Color32::RED).name(format!("y = {}x", self.data.task_1_data.slope));
+			let best_fit_line = egui::plot::Line::new(best_fit_points)
+				.color(Color32::RED)
+				.name(format!("y = {:.7}x, R² = {:.7}", self.data.task_1_data.slope, self.data.task_1_data.r_squared));
 			let plot_bounds = plot
 				.show(ui, |plot_ui| {
 					plot_ui.line(best_fit_line);

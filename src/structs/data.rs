@@ -19,6 +19,7 @@ impl Data {
 pub struct Task1Data {
 	pub plot_width: f64,
 	pub points: Vec<(f64, f64, Color32, String)>,
+	pub r_squared: f64,
 	pub slope: f64,
 }
 
@@ -27,6 +28,7 @@ impl Task1Data {
 		Self {
 			plot_width: 1.0,
 			points: Vec::new(),
+			r_squared: 1.0,
 			slope: 1.0,
 		}
 	}
@@ -42,12 +44,26 @@ impl Task1Data {
 			vals.push((object.distance_au.powf(1.5), object.period_years));
 		}
 		self.points = points;
+		let mut sum_y = 0.0;
 		let mut sum_xy = 0.0;
 		let mut sum_xx = 0.0;
-		for (x, y) in vals {
+		let vals_count = vals.len();
+		for &(x, y) in &vals {
+			sum_y += y;
 			sum_xy += x * y;
 			sum_xx += x.powi(2);
 		}
-		self.slope = sum_xy / sum_xx;
+		let slope = sum_xy / sum_xx;
+
+		let mean_y = sum_y / (vals_count as f64);
+		let mut ss_res = 0.0;
+		let mut ss_tot = 0.0;
+		for (x, y) in vals {
+			ss_res += (y - slope * x).powi(2);
+			ss_tot += (slope * x - mean_y).powi(2);
+		}
+		let r_squared = 1.0 - ss_res / ss_tot;
+		self.slope = slope;
+		self.r_squared = r_squared;
 	}
 }
