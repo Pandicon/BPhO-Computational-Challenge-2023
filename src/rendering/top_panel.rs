@@ -19,7 +19,7 @@ impl application::Application {
 					ui.label("Task to show: ");
 
 					egui::ComboBox::from_id_source("Planetary system to use: ")
-						.selected_text(format!("{}", self.planetary_systems[self.chosen_system].name))
+						.selected_text(&self.planetary_systems[self.chosen_system].name)
 						.show_ui(ui, |ui: &mut egui::Ui| {
 							ui.style_mut().wrap = Some(false);
 							for (i, system) in self.planetary_systems.iter().enumerate() {
@@ -34,7 +34,7 @@ impl application::Application {
 						for (key, value) in self.active_groups[self.chosen_system].iter_mut() {
 							key_value_pairs.push((key, value));
 						}
-						key_value_pairs.sort_by(|a, b| a.0.cmp(&b.0));
+						key_value_pairs.sort_by(|a, b| a.0.cmp(b.0));
 						for (key, value) in key_value_pairs {
 							any_changed |= ui.checkbox(value, key).changed();
 						}

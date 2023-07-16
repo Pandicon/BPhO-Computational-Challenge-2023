@@ -26,11 +26,9 @@ impl Application {
 
 		let mut planetary_systems_names = HashMap::new();
 		if let Ok(mut reader) = csv::Reader::from_path(PLANETARY_SYSTEMS_NAMES_FILE) {
-			for name_data_raw in reader.deserialize::<[String; 2]>() {
-				if let Ok(name_data) = name_data_raw {
-					let [filename, name] = name_data;
-					planetary_systems_names.insert(filename, name);
-				}
+			for name_data in reader.deserialize::<[String; 2]>().flatten() {
+				let [filename, name] = name_data;
+				planetary_systems_names.insert(filename, name);
 			}
 		}
 
@@ -50,10 +48,8 @@ impl Application {
 
 				let mut system_objects = Vec::new();
 				if let Ok(mut reader) = csv::Reader::from_path(file.path()) {
-					for planetary_object_raw in reader.deserialize::<structs::PlanetaryObjectRaw>() {
-						if let Ok(planetary_object_raw) = planetary_object_raw {
-							system_objects.push(structs::PlanetaryObject::from_raw(planetary_object_raw));
-						}
+					for planetary_object_raw in reader.deserialize::<structs::PlanetaryObjectRaw>().flatten() {
+						system_objects.push(structs::PlanetaryObject::from_raw(planetary_object_raw));
 					}
 				}
 				if !system_objects.is_empty() {

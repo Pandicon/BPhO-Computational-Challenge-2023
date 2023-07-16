@@ -1,6 +1,6 @@
 use std::fmt::Display;
 
-#[derive(PartialEq)]
+#[derive(Eq, PartialEq)]
 pub enum Task {
 	Task1,
 }
