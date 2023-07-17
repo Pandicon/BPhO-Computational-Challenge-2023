@@ -22,6 +22,10 @@ impl Application {
 								.column(egui_extras::Column::auto())
 								.column(egui_extras::Column::auto())
 								.column(egui_extras::Column::auto())
+								.column(egui_extras::Column::auto())
+								.column(egui_extras::Column::auto())
+								.column(egui_extras::Column::auto())
+								.column(egui_extras::Column::auto())
 								.min_scrolled_height(0.0);
 							table
 								.header(20.0, |mut header| {
@@ -36,6 +40,18 @@ impl Application {
 									});
 									header.col(|ui| {
 										ui.strong("Eccentricity");
+									});
+									header.col(|ui| {
+										ui.strong("Inclination (degrees)");
+									});
+									header.col(|ui| {
+										ui.strong("Mean longitude (degrees)");
+									});
+									header.col(|ui| {
+										ui.strong("Longitude of perihelion (degrees)");
+									});
+									header.col(|ui| {
+										ui.strong("Longitude of the ascending node (degrees)");
 									});
 									header.col(|ui| {
 										ui.strong("Period (years)");
@@ -61,6 +77,18 @@ impl Application {
 											});
 											row.col(|ui| {
 												ui.label(format!("{:.7}", object.eccentricity));
+											});
+											row.col(|ui| {
+												ui.label(format!("{:.7}", object.inclination));
+											});
+											row.col(|ui| {
+												ui.label(format!("{:.7}", object.mean_longitude));
+											});
+											row.col(|ui| {
+												ui.label(format!("{:.7}", object.longitude_of_perihelion));
+											});
+											row.col(|ui| {
+												ui.label(format!("{:.7}", object.longitude_of_ascending_node));
 											});
 											row.col(|ui| {
 												ui.label(format!("{:.4}", object.period_years));
