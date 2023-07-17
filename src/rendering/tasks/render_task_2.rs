@@ -12,7 +12,7 @@ impl Application {
 		egui::CentralPanel::default().show(ctx, |ui| {
 			let axis_fmt = |val: f64, _range: &RangeInclusive<f64>| format!("{:.3} AU", val);
 
-			let label_fmt = |_s: &str, val: &egui::plot::PlotPoint| format!("{:.3} AU\n{:.3} AU", val.x, val.y);
+			let label_fmt = |_s: &str, val: &egui::plot::PlotPoint| format!("x: {:.3} AU\ny: {:.3} AU\ndistance: {:.3} AU", val.x, val.y, (val.x.powi(2) + val.y.powi(2)).sqrt());
 
 			let plot = egui::plot::Plot::new("Orbits of planets")
 				.data_aspect(1.0)
