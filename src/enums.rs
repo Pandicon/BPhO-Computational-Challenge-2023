@@ -1,10 +1,11 @@
 use std::fmt::Display;
 
-pub const TASKS_NUM: usize = 2;
+pub const TASKS_NUM: usize = 3;
 #[derive(Eq, PartialEq)]
 pub enum Task {
 	Task1,
 	Task2,
+	Task2Rotated,
 }
 
 impl Task {
@@ -12,6 +13,7 @@ impl Task {
 		match *self {
 			Self::Task1 => 0,
 			Self::Task2 => 1,
+			Self::Task2Rotated => 2,
 		}
 	}
 
@@ -19,6 +21,7 @@ impl Task {
 		match index {
 			0 => Self::Task1,
 			1 => Self::Task2,
+			2 => Self::Task2Rotated,
 			_ => todo!(),
 		}
 	}
@@ -29,6 +32,7 @@ impl Display for Task {
 		match *self {
 			Task::Task1 => write!(f, "Task 1"),
 			Task::Task2 => write!(f, "Task 2"),
+			Task::Task2Rotated => write!(f, "Task 2 with rotation"),
 		}
 	}
 }

@@ -98,6 +98,7 @@ impl eframe::App for Application {
 		match self.chosen_task {
 			Task::Task1 => self.render_task_1(ctx),
 			Task::Task2 => self.render_task_2(ctx),
+			Task::Task2Rotated => self.render_task_2_rotated(ctx),
 		}
 		ctx.request_repaint();
 	}

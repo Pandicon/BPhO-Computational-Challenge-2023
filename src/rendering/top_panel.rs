@@ -19,6 +19,7 @@ impl application::Application {
 							ui.style_mut().wrap = Some(false);
 							ui.selectable_value(&mut self.chosen_task, Task::Task1, format!("{}", Task::Task1));
 							ui.selectable_value(&mut self.chosen_task, Task::Task2, format!("{}", Task::Task2));
+							ui.selectable_value(&mut self.chosen_task, Task::Task2Rotated, format!("{}", Task::Task2Rotated));
 						});
 					ui.label("Task to show: ");
 
