@@ -9,4 +9,8 @@ edition = "2021"
 csv = "1.2.2"
 eframe = "0.22.0"
 egui_extras = "0.22.0"
+egui-plotter = "0.3.0"
+nalgebra = "0.32.2"
+plotters-backend = "0.3.5"
+plotters = "0.3.5"
 serde = { version = "1.0.164", features = ["derive"] }

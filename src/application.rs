@@ -93,12 +93,28 @@ impl Application {
 
 impl eframe::App for Application {
 	fn update(&mut self, ctx: &eframe::egui::Context, _frame: &mut eframe::Frame) {
+		let input = self.get_input(ctx);
+		self.handle_input(input);
 		self.render_loaded_systems_window(ctx);
-		self.render_top_panel(ctx);
+		/*match self.chosen_task {
+			Task::Task1 | Task::Task2 | Task::Task2Rotated => ctx.tessellation_options_mut(|tess_options| {
+				tess_options.feathering = true;
+			}),
+			Task::Task4 => ctx.tessellation_options_mut(|tess_options| {
+				tess_options.feathering = false;
+			}),
+		}*/
+		if self.chosen_task.render_after_top_panel() {
+			self.render_top_panel(ctx);
+		}
 		match self.chosen_task {
 			Task::Task1 => self.render_task_1(ctx),
 			Task::Task2 => self.render_task_2(ctx),
 			Task::Task2Rotated => self.render_task_2_rotated(ctx),
+			Task::Task4 => self.render_task_4(ctx),
+		}
+		if !self.chosen_task.render_after_top_panel() {
+			self.render_top_panel(ctx);
 		}
 		ctx.request_repaint();
 	}

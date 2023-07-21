@@ -4,6 +4,14 @@ use std::{
 };
 
 use eframe::epaint::Color32;
+use egui_plotter::Chart;
+//use egui_plotter::MouseConfig;
+/*use plotters::{
+	prelude::{ChartBuilder, IntoLinspace, PathElement, Rectangle, SeriesLabelPosition},
+	series::{LineSeries, SurfaceSeries},
+	style::{full_palette::GREY, Color, IntoFont, RGBAColor, TextStyle, BLACK, BLUE},
+};
+use plotters_backend::FontFamily;*/
 
 use crate::{constants, enums, structs};
 
@@ -11,6 +19,7 @@ pub struct Data {
 	pub task_1_data: Task1Data,
 	pub task_2_data: Task2Data,
 	pub task_2_rotated_data: Task2RotatedData,
+	pub task_4_data: Task4Data,
 }
 
 impl Data {
@@ -19,6 +28,7 @@ impl Data {
 			task_1_data: Task1Data::new(),
 			task_2_data: Task2Data::new(),
 			task_2_rotated_data: Task2RotatedData::new(),
+			task_4_data: Task4Data::new(),
 		}
 	}
 
@@ -27,6 +37,7 @@ impl Data {
 			enums::Task::Task1 => self.init_task_1(&planetary_systems[chosen_system], &active_groups[chosen_task.task_index()][chosen_system]),
 			enums::Task::Task2 => self.init_task_2(&planetary_systems[chosen_system], &active_groups[chosen_task.task_index()][chosen_system]),
 			enums::Task::Task2Rotated => self.init_task_2_rotated(&planetary_systems[chosen_system], &active_groups[chosen_task.task_index()][chosen_system]),
+			enums::Task::Task4 => self.init_task_4(&planetary_systems[chosen_system], &active_groups[chosen_task.task_index()][chosen_system]),
 		}
 	}
 
@@ -44,6 +55,10 @@ impl Data {
 
 	fn init_task_2_rotated(&mut self, planetary_system: &structs::PlanetarySystem, active_groups: &HashMap<String, bool>) {
 		self.task_2_rotated_data.init(planetary_system, active_groups);
+	}
+
+	fn init_task_4(&mut self, planetary_system: &structs::PlanetarySystem, active_groups: &HashMap<String, bool>) {
+		self.task_4_data.init(planetary_system, active_groups);
 	}
 }
 
@@ -198,5 +213,120 @@ impl Task2RotatedData {
 			points.push((points_object, colour, index, name.clone(), distance == 0.0));
 		}
 		self.points = points;
+	}
+}
+
+pub struct Task4Data {
+	pub plot_width: f64,
+	/// [([(x, y, z)], colour, index, name)]
+	pub points: Vec<(Vec<[f64; 3]>, Color32, usize, String)>,
+	//pub chart: Chart,
+	pub offset_x: f32,
+	pub offset_y: f32,
+	pub rotate_x: f32,
+	pub rotate_y: f32,
+	pub zoom_coefficient: f32,
+}
+
+impl Task4Data {
+	pub fn new() -> Self {
+		Self {
+			plot_width: 1.0,
+			points: Vec::new(),
+			// chart: Chart::new(),
+			offset_x: 0.0,
+			offset_y: 0.0,
+			rotate_x: 0.0,
+			rotate_y: 0.0,
+			zoom_coefficient: 30.0,
+		}
+	}
+
+	fn init(&mut self, planetary_system: &structs::PlanetarySystem, active_groups: &HashMap<String, bool>) {
+		let mut points_all = Vec::new();
+		for object in &planetary_system.objects {
+			points_all.push((
+				object.distance_au,
+				object.eccentricity,
+				object.inclination,
+				object.colour,
+				object.name.clone(),
+				*active_groups.get(&object.group).unwrap_or(&true),
+			));
+		}
+		points_all.sort_by(|a, b| a.0.total_cmp(&b.0));
+		let mut points = Vec::new();
+		for (index, (distance, eccentricity, inclination, colour, name, active)) in points_all.iter().enumerate() {
+			if !*active {
+				continue;
+			}
+			let (&distance, &eccentricity, &colour) = (distance, eccentricity, colour);
+			if distance == 0.0 {
+				continue;
+			}
+			let inclination = *inclination * PI / 180.0;
+			let points_object = (0..=constants::TASK_4_STEPS)
+				.map(|i| {
+					let theta = eframe::emath::remap(i as f64, 0.0..=(constants::TASK_4_STEPS as f64), 0.0..=TAU);
+					let r = (distance * (1.0 - eccentricity.powi(2))) / (1.0 - eccentricity * theta.cos());
+					let x = r * theta.cos();
+					let y = r * theta.sin();
+					[x * inclination.cos(), y, x * inclination.sin()]
+				})
+				.collect::<Vec<[f64; 3]>>();
+			points.push((points_object, colour, index, name.clone()));
+		}
+		self.points = points.clone();
+
+		/*let chart = Chart::new().mouse(MouseConfig::enabled()).pitch(0.7).yaw(0.7).builder_cb(Box::new(move |area, transform, _d| {
+			// Build a chart like you would in any other plotter chart.
+			// The drawing area and projection transformations are provided
+			// by the callback, but otherwise everything else is the same.
+			let x_axis = (-3.0..3.0_f64).step(0.1);
+			let z_axis = (-3.0..3.0_f64).step(0.1);
+
+			let mut chart = ChartBuilder::on(area)
+				.caption(format!("3D Plot Test"), TextStyle::from((FontFamily::SansSerif, 20)).color(&GREY))
+				.build_cartesian_3d(x_axis, -3.0..3.0_f64, z_axis)
+				.unwrap();
+
+			chart.with_projection(|mut pb| {
+				pb.yaw = transform.yaw;
+				pb.pitch = transform.pitch;
+				pb.scale = 0.7; // Set scale to 0.7 to avoid artifacts caused by plotter's renderer
+				pb.into_matrix()
+			});
+
+			chart
+				.configure_axes()
+				.bold_grid_style(GREY.mix(0.3))
+				.light_grid_style(GREY.mix(0.15))
+				.x_formatter(&|x| format!("{x:.3} AU"))
+				.label_style(TextStyle::from((FontFamily::SansSerif, 15)).color(&GREY))
+				.max_light_lines(3)
+				.draw()
+				.unwrap();
+
+			for (positions, colour, index, name) in &points {
+				let (r, g, b, a) = (colour.r(), colour.g(), colour.b(), colour.a() as f64 / 255.0);
+				let colour = RGBAColor(r, g, b, a);
+				chart
+					.draw_series(LineSeries::new(positions.iter().map(|&[x, y, z]| (x * 10.0, y * 10.0, z * 10.0)), &colour))
+					.unwrap()
+					.label(format!("[{}] {}", index, name))
+					.legend(move |(x, y)| PathElement::new(vec![(x, y), (x + 20, y)], RGBAColor(r, g, b, a)));
+			}
+
+			chart
+				.configure_series_labels()
+				.border_style(GREY)
+				.label_font(TextStyle::from((FontFamily::SansSerif, 15)).color(&GREY))
+				.position(SeriesLabelPosition::UpperRight)
+				.margin(20)
+				.draw()
+				.unwrap();
+		}));
+
+		self.chart = chart;*/
 	}
 }

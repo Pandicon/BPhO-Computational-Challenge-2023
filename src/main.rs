@@ -1,6 +1,7 @@
 pub mod application;
 pub mod constants;
 pub mod enums;
+pub mod input;
 mod rendering;
 pub mod structs;
 

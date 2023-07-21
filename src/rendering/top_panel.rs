@@ -17,9 +17,11 @@ impl application::Application {
 						.selected_text(format!("{}", self.chosen_task))
 						.show_ui(ui, |ui: &mut egui::Ui| {
 							ui.style_mut().wrap = Some(false);
-							ui.selectable_value(&mut self.chosen_task, Task::Task1, format!("{}", Task::Task1));
-							ui.selectable_value(&mut self.chosen_task, Task::Task2, format!("{}", Task::Task2));
-							ui.selectable_value(&mut self.chosen_task, Task::Task2Rotated, format!("{}", Task::Task2Rotated));
+
+							for task_i in 0..crate::enums::TASKS_NUM {
+								let task = Task::from_index(task_i);
+								ui.selectable_value(&mut self.chosen_task, task, format!("{}", task));
+							}
 						});
 					ui.label("Task to show: ");
 
