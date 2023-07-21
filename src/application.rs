@@ -105,7 +105,7 @@ impl eframe::App for Application {
 			}),
 		}*/
 		if self.chosen_task.render_after_top_panel() {
-			self.render_top_panel(ctx);
+			self.data.top_panel_bottom = self.render_top_panel(ctx).response.rect.max.y;
 		}
 		match self.chosen_task {
 			Task::Task1 => self.render_task_1(ctx),
@@ -114,7 +114,7 @@ impl eframe::App for Application {
 			Task::Task4 => self.render_task_4(ctx),
 		}
 		if !self.chosen_task.render_after_top_panel() {
-			self.render_top_panel(ctx);
+			self.data.top_panel_bottom = self.render_top_panel(ctx).response.rect.max.y;
 		}
 		ctx.request_repaint();
 	}

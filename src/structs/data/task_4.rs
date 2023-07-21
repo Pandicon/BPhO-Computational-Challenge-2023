@@ -20,6 +20,8 @@ pub struct Task4Data {
 	pub rotate_x: f32,
 	pub rotate_y: f32,
 	pub zoom_coefficient: f32,
+	pub labels_height: f32,
+	pub labels_width: f32,
 }
 
 impl Task4Data {
@@ -35,6 +37,8 @@ impl Task4Data {
 			rotate_x: 0.0,
 			rotate_y: 0.0,
 			zoom_coefficient: 30.0,
+			labels_height: 100.0,
+			labels_width: 100.0,
 		}
 	}
 

@@ -13,6 +13,8 @@ use std::collections::HashMap;
 use crate::{enums, structs};
 
 pub struct Data {
+	pub top_panel_bottom: f32,
+
 	pub task_1_data: Task1Data,
 	pub task_2_data: Task2Data,
 	pub task_2_rotated_data: Task2RotatedData,
@@ -22,6 +24,8 @@ pub struct Data {
 impl Data {
 	pub fn new() -> Self {
 		Self {
+			top_panel_bottom: 0.0,
+
 			task_1_data: Task1Data::new(),
 			task_2_data: Task2Data::new(),
 			task_2_rotated_data: Task2RotatedData::new(),

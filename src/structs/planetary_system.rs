@@ -70,7 +70,7 @@ fn parse_colour(col: Option<String>, default_colour: Color32) -> Color32 {
 			let g = col_raw % 256;
 			col_raw /= 256;
 			let r = col_raw;
-			Color32::from_rgba_premultiplied(r as u8, g as u8, b as u8, a as u8)
+			Color32::from_rgba_unmultiplied(r as u8, g as u8, b as u8, a as u8)
 		} else {
 			default_colour
 		}
