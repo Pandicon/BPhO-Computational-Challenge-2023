@@ -3,14 +3,18 @@ use std::{
 	f64::consts::{PI, TAU},
 };
 
-use eframe::epaint::Color32;
+use eframe::{egui, epaint::Color32};
 
 use crate::{constants, structs};
 
 pub struct Task4Data {
 	pub plot_width: f64,
+	/// [([(x, y, z)], colour)]
+	pub markers: Vec<([f64; 3], Color32)>,
 	/// [([(x, y, z)], colour, index, name)]
 	pub points: Vec<(Vec<[f64; 3]>, Color32, usize, String)>,
+	pub time: f64,
+	pub speed: f64,
 	pub offset_x: f32,
 	pub offset_y: f32,
 	pub rotate_x: f32,
@@ -22,7 +26,10 @@ impl Task4Data {
 	pub fn new() -> Self {
 		Self {
 			plot_width: 1.0,
+			markers: Vec::new(),
 			points: Vec::new(),
+			time: 0.0,
+			speed: 1.0,
 			offset_x: 0.0,
 			offset_y: 0.0,
 			rotate_x: 0.0,
@@ -57,14 +64,34 @@ impl Task4Data {
 			let points_object = (0..=constants::TASK_4_STEPS)
 				.map(|i| {
 					let theta = eframe::emath::remap(i as f64, 0.0..=(constants::TASK_4_STEPS as f64), 0.0..=TAU);
-					let r = (distance * (1.0 - eccentricity.powi(2))) / (1.0 - eccentricity * theta.cos());
-					let x = r * theta.cos();
-					let y = r * theta.sin();
-					[x * inclination.cos(), y, x * inclination.sin()]
+					pos(distance, eccentricity, inclination, theta)
 				})
 				.collect::<Vec<[f64; 3]>>();
 			points.push((points_object, colour, index, name.clone()));
 		}
 		self.points = points.clone();
 	}
+
+	pub fn move_markers(&mut self, ctx: &egui::Context, planetary_system: &structs::PlanetarySystem, active_groups: &HashMap<String, bool>) {
+		let dt = ctx.input(|i| i.stable_dt) as f64;
+		self.time += dt * self.speed;
+		let mut markers = Vec::new();
+		for object in &planetary_system.objects {
+			if !*active_groups.get(&object.group).unwrap_or(&true) {
+				continue;
+			}
+			let (distance, period, eccentricity, colour) = (object.distance_au, object.period_years, object.eccentricity, object.colour);
+			let inclination = object.inclination * PI / 180.0;
+			let theta = TAU * if period != 0.0 { (self.time % period) / period } else { 0.0 };
+			markers.push((pos(distance, eccentricity, inclination, theta), colour));
+		}
+		self.markers = markers;
+	}
+}
+
+fn pos(distance: f64, eccentricity: f64, inclination: f64, theta: f64) -> [f64; 3] {
+	let r = (distance * (1.0 - eccentricity.powi(2))) / (1.0 - eccentricity * theta.cos());
+	let x = r * theta.cos();
+	let y = r * theta.sin();
+	[x * inclination.cos(), y, x * inclination.sin()]
 }
