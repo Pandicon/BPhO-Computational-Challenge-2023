@@ -39,7 +39,7 @@ impl Application {
 					lines_vertices.push(([points[i], points[i + 1]], colour));
 				}
 			}
-			lines_vertices.sort_by(|&(a, _), &(b, _)| (a[0][2] + a[1][2]).partial_cmp(&(b[0][2] + b[1][2])).unwrap());
+			lines_vertices.sort_by(|&(a, _), &(b, _)| (b[0][2] + b[1][2]).partial_cmp(&(a[0][2] + a[1][2])).unwrap());
 			for &([pos_s, pos_n], colour) in &lines_vertices {
 				painter.line_segment(
 					[
@@ -55,7 +55,7 @@ impl Application {
 				let v = projection_matrix * Vector3::new(x as f32, z as f32, y as f32); // Swapping y and z is needed since in rendering the y-axis is usually pointing upwards
 				markers.push(([v.x, v.y, v.z], colour));
 			}
-			markers.sort_by(|(a, _), (b, _)| a[2].partial_cmp(&b[2]).unwrap());
+			markers.sort_by(|(a, _), (b, _)| b[2].partial_cmp(&a[2]).unwrap());
 			for &([x, y, _z], colour) in &markers {
 				painter.circle_filled(egui::Pos2::new(win_offset_x + graph_offset_x + x * zoom, win_offset_y + graph_offset_y + y * zoom), 6.0, colour);
 			}
