@@ -49,6 +49,14 @@ impl application::Application {
 							self.data.init_task(&self.chosen_task, self.chosen_system, &self.planetary_systems, &self.active_groups);
 						}
 					});
+
+					match self.chosen_task {
+						Task::Task1 | Task::Task2 | Task::Task2Rotated => {}
+						Task::Task4 => {
+							ui.add(egui::DragValue::new(&mut self.data.task_4_data.speed).speed(0.1));
+							ui.label("Animation speed (years/second): ");
+						}
+					}
 				});
 			});
 		})

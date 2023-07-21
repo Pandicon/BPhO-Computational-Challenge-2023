@@ -6,6 +6,7 @@ pub struct Input {
 	pub dragged: egui::Vec2,
 	pub dragged_rotate: egui::Vec2,
 	pub zoom: f32,
+	pub alt_scroll: f32,
 }
 
 impl Default for Input {
@@ -14,6 +15,7 @@ impl Default for Input {
 			dragged: egui::Vec2::new(0.0, 0.0),
 			dragged_rotate: egui::Vec2::new(0.0, 0.0),
 			zoom: 0.0,
+			alt_scroll: 0.0,
 		}
 	}
 }
@@ -28,6 +30,7 @@ impl crate::application::Application {
 				self.data.task_4_data.rotate_x += input.dragged_rotate.y;
 				self.data.task_4_data.rotate_y += input.dragged_rotate.x;
 				self.data.task_4_data.zoom_coefficient += input.zoom;
+				self.data.task_4_data.speed += input.alt_scroll as f64;
 
 				if self.data.task_4_data.rotate_x > 90.0 {
 					self.data.task_4_data.rotate_x = 90.0;
@@ -58,12 +61,17 @@ impl crate::application::Application {
 					}
 				}
 				egui::Event::Scroll(egui::Vec2 { y, .. }) => {
-					if y < 0.0 {
-						input.zoom = -0.25;
+					let val = if y < 0.0 {
+						-0.25
 					} else if y == 0.0 {
-						input.zoom = 0.0;
+						0.0
 					} else {
-						input.zoom = 0.25;
+						0.25
+					};
+					if ctx.input(|i| i.modifiers.alt) {
+						input.alt_scroll = val;
+					} else {
+						input.zoom = val;
 					}
 				}
 				_ => {}
