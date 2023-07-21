@@ -38,6 +38,20 @@ impl crate::application::Application {
 					self.data.task_4_data.rotate_x = -90.0;
 				}
 			}
+			Task::Task5B => {
+				self.data.task_5b_data.offset_x += input.dragged.x;
+				self.data.task_5b_data.offset_y += input.dragged.y;
+				self.data.task_5b_data.rotate_x += input.dragged_rotate.y;
+				self.data.task_5b_data.rotate_y += input.dragged_rotate.x;
+				self.data.task_5b_data.zoom_coefficient += input.zoom;
+				self.data.task_5b_data.speed += input.alt_scroll as f64;
+
+				if self.data.task_5b_data.rotate_x > 90.0 {
+					self.data.task_5b_data.rotate_x = 90.0;
+				} else if self.data.task_5b_data.rotate_x < -90.0 {
+					self.data.task_5b_data.rotate_x = -90.0;
+				}
+			}
 		}
 	}
 

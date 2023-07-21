@@ -56,6 +56,10 @@ impl application::Application {
 							ui.add(egui::DragValue::new(&mut self.data.task_4_data.speed).speed(0.1));
 							ui.label("Animation speed (years/second): ");
 						}
+						Task::Task5B => {
+							ui.add(egui::DragValue::new(&mut self.data.task_5b_data.speed).speed(0.1));
+							ui.label("Animation speed (years/second): ");
+						}
 					}
 				});
 			});
