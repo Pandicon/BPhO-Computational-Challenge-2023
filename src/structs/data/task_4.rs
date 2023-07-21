@@ -9,10 +9,10 @@ use crate::{constants, structs};
 
 pub struct Task4Data {
 	pub plot_width: f64,
-	/// [([(x, y, z)], colour)]
-	pub markers: Vec<([f64; 3], Color32)>,
 	/// [([(x, y, z)], colour, index, name)]
-	pub points: Vec<(Vec<[f64; 3]>, Color32, usize, String)>,
+	pub markers: Vec<([f64; 3], Color32, usize, String)>,
+	/// [([(x, y, z)], colour)]
+	pub points: Vec<(Vec<[f64; 3]>, Color32)>,
 	pub time: f64,
 	pub speed: f64,
 	pub offset_x: f32,
@@ -50,28 +50,26 @@ impl Task4Data {
 				object.eccentricity,
 				object.inclination,
 				object.colour,
-				object.name.clone(),
 				*active_groups.get(&object.group).unwrap_or(&true),
 			));
 		}
 		points_all.sort_by(|a, b| a.0.total_cmp(&b.0));
 		let mut points = Vec::new();
-		for (index, (distance, eccentricity, inclination, colour, name, active)) in points_all.iter().enumerate() {
-			if !*active {
+		for &(distance, eccentricity, inclination, colour, active) in &points_all {
+			if !active {
 				continue;
 			}
-			let (&distance, &eccentricity, &colour) = (distance, eccentricity, colour);
 			if distance == 0.0 {
 				continue;
 			}
-			let inclination = *inclination * PI / 180.0;
+			let inclination = inclination * PI / 180.0;
 			let points_object = (0..=constants::TASK_4_STEPS)
 				.map(|i| {
 					let theta = eframe::emath::remap(i as f64, 0.0..=(constants::TASK_4_STEPS as f64), 0.0..=TAU);
 					pos(distance, eccentricity, inclination, theta)
 				})
 				.collect::<Vec<[f64; 3]>>();
-			points.push((points_object, colour, index, name.clone()));
+			points.push((points_object, colour));
 		}
 		self.points = points.clone();
 	}
@@ -79,15 +77,28 @@ impl Task4Data {
 	pub fn move_markers(&mut self, ctx: &egui::Context, planetary_system: &structs::PlanetarySystem, active_groups: &HashMap<String, bool>) {
 		let dt = ctx.input(|i| i.stable_dt) as f64;
 		self.time += dt * self.speed;
-		let mut markers = Vec::new();
+		let mut points_all = Vec::new();
 		for object in &planetary_system.objects {
-			if !*active_groups.get(&object.group).unwrap_or(&true) {
+			points_all.push((
+				object.distance_au,
+				object.period_years,
+				object.eccentricity,
+				object.inclination,
+				object.colour,
+				object.name.clone(),
+				*active_groups.get(&object.group).unwrap_or(&true),
+			));
+		}
+		points_all.sort_by(|a, b| a.0.total_cmp(&b.0));
+		let mut markers = Vec::new();
+		for (index, (distance, period, eccentricity, inclination, colour, name, active)) in points_all.iter().enumerate() {
+			if !*active {
 				continue;
 			}
-			let (distance, period, eccentricity, colour) = (object.distance_au, object.period_years, object.eccentricity, object.colour);
-			let inclination = object.inclination * PI / 180.0;
+			let (&distance, &period, &eccentricity, &inclination, &colour) = (distance, period, eccentricity, inclination, colour);
+			let inclination = inclination * PI / 180.0;
 			let theta = TAU * if period != 0.0 { (self.time % period) / period } else { 0.0 };
-			markers.push((pos(distance, eccentricity, inclination, theta), colour));
+			markers.push((pos(distance, eccentricity, inclination, theta), colour, index, name.clone()));
 		}
 		self.markers = markers;
 	}

@@ -35,7 +35,7 @@ impl Application {
 			let mut labels = Vec::new();
 
 			let mut lines_vertices = Vec::new();
-			for (points, colour, index, name) in &self.data.task_4_data.points {
+			for (points, colour) in &self.data.task_4_data.points {
 				if points.is_empty() {
 					continue;
 				}
@@ -49,7 +49,6 @@ impl Application {
 				for i in 0..(points.len() - 1) {
 					lines_vertices.push(([points[i], points[i + 1]], colour));
 				}
-				labels.push((format!("[{}] {}", index, name), *colour));
 			}
 			lines_vertices.sort_by(|&(a, _), &(b, _)| (a[0][2] + a[1][2]).partial_cmp(&(b[0][2] + b[1][2])).unwrap());
 			for &([pos_s, pos_n], colour) in &lines_vertices {
@@ -63,9 +62,10 @@ impl Application {
 			}
 
 			let mut markers = Vec::new();
-			for &([x, y, z], colour) in &self.data.task_4_data.markers {
-				let v = projection_matrix * Vector3::new(x as f32, z as f32, y as f32); // Swapping y and z is needed since in rendering the y-axis is usually pointing upwards
-				markers.push(([v.x, v.y, v.z], colour));
+			for ([x, y, z], colour, index, name) in &self.data.task_4_data.markers {
+				let v = projection_matrix * Vector3::new(*x as f32, *z as f32, *y as f32); // Swapping y and z is needed since in rendering the y-axis is usually pointing upwards
+				markers.push(([v.x, v.y, v.z], *colour));
+				labels.push((format!("[{}] {}", index, name), *colour));
 			}
 			markers.sort_by(|(a, _), (b, _)| b[2].partial_cmp(&a[2]).unwrap());
 			for &([x, y, _z], colour) in &markers {
