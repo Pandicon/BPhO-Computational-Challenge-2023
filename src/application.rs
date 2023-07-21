@@ -112,6 +112,7 @@ impl eframe::App for Application {
 			Task::Task2 => self.render_task_2(ctx),
 			Task::Task2Rotated => self.render_task_2_rotated(ctx),
 			Task::Task4 => self.render_task_4(ctx),
+			Task::Task5A => self.render_task_5a(ctx),
 		}
 		if !self.chosen_task.render_after_top_panel() {
 			self.data.top_panel_bottom = self.render_top_panel(ctx).response.rect.max.y;

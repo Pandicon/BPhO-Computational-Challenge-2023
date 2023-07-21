@@ -2,11 +2,13 @@ pub mod task_1;
 pub mod task_2;
 pub mod task_2_rotated;
 pub mod task_4;
+pub mod task_5a;
 
 use task_1::*;
 use task_2::*;
 use task_2_rotated::*;
 use task_4::*;
+use task_5a::*;
 
 use std::collections::HashMap;
 
@@ -19,6 +21,7 @@ pub struct Data {
 	pub task_2_data: Task2Data,
 	pub task_2_rotated_data: Task2RotatedData,
 	pub task_4_data: Task4Data,
+	pub task_5a_data: Task5AData,
 }
 
 impl Data {
@@ -30,6 +33,7 @@ impl Data {
 			task_2_data: Task2Data::new(),
 			task_2_rotated_data: Task2RotatedData::new(),
 			task_4_data: Task4Data::new(),
+			task_5a_data: Task5AData::new(),
 		}
 	}
 
@@ -39,6 +43,7 @@ impl Data {
 			enums::Task::Task2 => self.init_task_2(&planetary_systems[chosen_system], &active_groups[chosen_task.task_index()][chosen_system]),
 			enums::Task::Task2Rotated => self.init_task_2_rotated(&planetary_systems[chosen_system], &active_groups[chosen_task.task_index()][chosen_system]),
 			enums::Task::Task4 => self.init_task_4(&planetary_systems[chosen_system], &active_groups[chosen_task.task_index()][chosen_system]),
+			enums::Task::Task5A => self.init_task_5a(&planetary_systems[chosen_system], &active_groups[chosen_task.task_index()][chosen_system]),
 		}
 	}
 
@@ -60,5 +65,9 @@ impl Data {
 
 	fn init_task_4(&mut self, planetary_system: &structs::PlanetarySystem, active_groups: &HashMap<String, bool>) {
 		self.task_4_data.init(planetary_system, active_groups);
+	}
+
+	fn init_task_5a(&mut self, planetary_system: &structs::PlanetarySystem, active_groups: &HashMap<String, bool>) {
+		self.task_5a_data.init(planetary_system, active_groups);
 	}
 }

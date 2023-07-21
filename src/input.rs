@@ -23,7 +23,7 @@ impl Default for Input {
 impl crate::application::Application {
 	pub fn handle_input(&mut self, input: Input) {
 		match self.chosen_task {
-			Task::Task1 | Task::Task2 | Task::Task2Rotated => {}
+			Task::Task1 | Task::Task2 | Task::Task2Rotated | Task::Task5A => {}
 			Task::Task4 => {
 				self.data.task_4_data.offset_x += input.dragged.x;
 				self.data.task_4_data.offset_y += input.dragged.y;

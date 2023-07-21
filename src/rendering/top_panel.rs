@@ -51,7 +51,7 @@ impl application::Application {
 					});
 
 					match self.chosen_task {
-						Task::Task1 | Task::Task2 | Task::Task2Rotated => {}
+						Task::Task1 | Task::Task2 | Task::Task2Rotated | Task::Task5A => {}
 						Task::Task4 => {
 							ui.add(egui::DragValue::new(&mut self.data.task_4_data.speed).speed(0.1));
 							ui.label("Animation speed (years/second): ");
