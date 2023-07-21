@@ -1,0 +1,60 @@
+pub mod task_1;
+pub mod task_2;
+pub mod task_2_rotated;
+pub mod task_4;
+
+use task_1::*;
+use task_2::*;
+use task_2_rotated::*;
+use task_4::*;
+
+use std::collections::HashMap;
+
+use crate::{enums, structs};
+
+pub struct Data {
+	pub task_1_data: Task1Data,
+	pub task_2_data: Task2Data,
+	pub task_2_rotated_data: Task2RotatedData,
+	pub task_4_data: Task4Data,
+}
+
+impl Data {
+	pub fn new() -> Self {
+		Self {
+			task_1_data: Task1Data::new(),
+			task_2_data: Task2Data::new(),
+			task_2_rotated_data: Task2RotatedData::new(),
+			task_4_data: Task4Data::new(),
+		}
+	}
+
+	pub fn init_task(&mut self, chosen_task: &enums::Task, chosen_system: usize, planetary_systems: &Vec<structs::PlanetarySystem>, active_groups: &Vec<Vec<HashMap<String, bool>>>) {
+		match *chosen_task {
+			enums::Task::Task1 => self.init_task_1(&planetary_systems[chosen_system], &active_groups[chosen_task.task_index()][chosen_system]),
+			enums::Task::Task2 => self.init_task_2(&planetary_systems[chosen_system], &active_groups[chosen_task.task_index()][chosen_system]),
+			enums::Task::Task2Rotated => self.init_task_2_rotated(&planetary_systems[chosen_system], &active_groups[chosen_task.task_index()][chosen_system]),
+			enums::Task::Task4 => self.init_task_4(&planetary_systems[chosen_system], &active_groups[chosen_task.task_index()][chosen_system]),
+		}
+	}
+
+	pub fn init_task_by_id(&mut self, chosen_task: usize, chosen_system: usize, planetary_systems: &Vec<structs::PlanetarySystem>, active_groups: &Vec<Vec<HashMap<String, bool>>>) {
+		self.init_task(&enums::Task::from_index(chosen_task), chosen_system, planetary_systems, active_groups);
+	}
+
+	fn init_task_1(&mut self, planetary_system: &structs::PlanetarySystem, active_groups: &HashMap<String, bool>) {
+		self.task_1_data.init(planetary_system, active_groups);
+	}
+
+	fn init_task_2(&mut self, planetary_system: &structs::PlanetarySystem, active_groups: &HashMap<String, bool>) {
+		self.task_2_data.init(planetary_system, active_groups);
+	}
+
+	fn init_task_2_rotated(&mut self, planetary_system: &structs::PlanetarySystem, active_groups: &HashMap<String, bool>) {
+		self.task_2_rotated_data.init(planetary_system, active_groups);
+	}
+
+	fn init_task_4(&mut self, planetary_system: &structs::PlanetarySystem, active_groups: &HashMap<String, bool>) {
+		self.task_4_data.init(planetary_system, active_groups);
+	}
+}
