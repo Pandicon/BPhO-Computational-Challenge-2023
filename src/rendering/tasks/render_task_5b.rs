@@ -10,6 +10,7 @@ const LABELS_LEFT_MARGIN: f32 = 5.0;
 const LABELS_PADDING: f32 = 5.0;
 const LABELS_GAP: f32 = 5.0;
 const LABELS_CIRCLE_RADIUS: f32 = 5.0;
+const LABELS_CIRCLE_STROKE: f32 = 2.0;
 const LABELS_CIRCLE_LABEL_GAP: f32 = 7.0;
 const LABELS_RECT_STROKE_WIDTH: f32 = 2.0;
 const LIGHT_COLOUR: Color32 = Color32::from_rgba_premultiplied(255, 255, 255, 255);
@@ -66,9 +67,9 @@ impl Application {
 				let v = projection_matrix * Vector3::new(*x as f32, *z as f32, *y as f32); // Swapping y and z is needed since in rendering the y-axis is usually pointing upwards
 				markers.push(([v.x, v.y, v.z], *colour, *stroke_only));
 				if *stroke_only {
-					labels.push((format!("[{}] {} (linear)", index, name), *colour));
+					labels.push((format!("[{}] {} (linear)", index, name), *colour, *stroke_only));
 				} else {
-					labels.push((format!("[{}] {}", index, name), *colour));
+					labels.push((format!("[{}] {}", index, name), *colour, *stroke_only));
 				}
 			}
 			markers.sort_by(|(a, ..), (b, ..)| b[2].partial_cmp(&a[2]).unwrap());
@@ -111,7 +112,7 @@ impl Application {
 			);
 
 			let painter = ui.painter();
-			labels.sort_by(|(a, _), (b, _)| a.cmp(&b));
+			labels.sort_by(|(a, ..), (b, ..)| a.cmp(&b));
 			painter.rect_filled(
 				egui::Rect::from_two_pos(
 					egui::pos2(LABELS_LEFT_MARGIN, LABELS_TOP_MARGIN + self.data.top_panel_bottom + heading_label_height),
@@ -136,7 +137,7 @@ impl Application {
 			);
 			let mut only_labels_height = 0.0;
 			let mut max_width = 0.0;
-			for (i, (text, colour)) in labels.iter().enumerate() {
+			for (i, (text, colour, stroke_only)) in labels.iter().enumerate() {
 				let top = self.data.top_panel_bottom + LABELS_TOP_MARGIN + LABELS_PADDING + (i as f32) * LABELS_GAP + only_labels_height + heading_label_height;
 				let left = LABELS_LEFT_MARGIN + LABELS_RECT_STROKE_WIDTH + LABELS_PADDING;
 
@@ -157,7 +158,11 @@ impl Application {
 				let painter = ui.painter();
 				let circle_centre_x = left + LABELS_CIRCLE_RADIUS;
 				let circle_centre_y = top + label_height / 2.0;
-				painter.circle_filled(egui::pos2(circle_centre_x, circle_centre_y), LABELS_CIRCLE_RADIUS, *colour);
+				if *stroke_only {
+					painter.circle_stroke(egui::pos2(circle_centre_x, circle_centre_y), LABELS_CIRCLE_RADIUS, egui::Stroke::new(LABELS_CIRCLE_STROKE, *colour));
+				} else {
+					painter.circle_filled(egui::pos2(circle_centre_x, circle_centre_y), LABELS_CIRCLE_RADIUS, *colour);
+				}
 			}
 			self.data.task_5b_data.labels_height = only_labels_height + ((labels.len() - 1) as f32) * LABELS_GAP + 2.0 * LABELS_PADDING;
 			self.data.task_5b_data.labels_width = max_width;
