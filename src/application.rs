@@ -112,6 +112,7 @@ impl eframe::App for Application {
 				self.data.task_6_data.screen_width = (screen_rect.max.x - screen_rect.min.x).abs() as f64;
 				self.render_task_6(ctx);
 			}
+			Task::Task7 => self.render_task_7(ctx),
 		}
 		if !self.chosen_task.render_after_top_panel() {
 			self.data.top_panel_bottom = self.render_top_panel(ctx).response.rect.max.y;

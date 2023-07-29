@@ -1,6 +1,6 @@
 use std::fmt::Display;
 
-pub const TASKS_NUM: usize = 7;
+pub const TASKS_NUM: usize = 8;
 #[derive(Eq, PartialEq, Clone, Copy)]
 pub enum Task {
 	Task1,
@@ -10,6 +10,7 @@ pub enum Task {
 	Task5A,
 	Task5B,
 	Task6,
+	Task7,
 }
 
 impl Task {
@@ -22,6 +23,7 @@ impl Task {
 			Self::Task5A => 4,
 			Self::Task5B => 5,
 			Self::Task6 => 6,
+			Self::Task7 => 7,
 		}
 	}
 
@@ -34,6 +36,7 @@ impl Task {
 			4 => Self::Task5A,
 			5 => Self::Task5B,
 			6 => Self::Task6,
+			7 => Self::Task7,
 			_ => todo!(),
 		}
 	}
@@ -41,13 +44,13 @@ impl Task {
 	pub fn render_after_top_panel(&self) -> bool {
 		match *self {
 			Self::Task1 | Self::Task2 | Self::Task2Rotated | Self::Task5A => true,
-			Self::Task4 | Self::Task5B | Self::Task6 => false,
+			Self::Task4 | Self::Task5B | Self::Task6 | Self::Task7 => false,
 		}
 	}
 
 	pub fn should_request_repaint(&self) -> bool {
 		match *self {
-			Self::Task4 | Self::Task5B => true,
+			Self::Task4 | Self::Task5B | Self::Task7 => true,
 			Self::Task1 | Self::Task2 | Self::Task2Rotated | Self::Task5A | Self::Task6 => false,
 		}
 	}
@@ -63,6 +66,7 @@ impl Display for Task {
 			Self::Task5A => write!(f, "Task 5a"),
 			Self::Task5B => write!(f, "Task 5b"),
 			Self::Task6 => write!(f, "Task 6"),
+			Self::Task7 => write!(f, "Task 7"),
 		}
 	}
 }

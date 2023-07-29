@@ -36,7 +36,7 @@ impl application::Application {
 					ui.label("Planetary system to use: ");
 
 					match self.chosen_task {
-						Task::Task1 | Task::Task2 | Task::Task2Rotated | Task::Task4 | Task::Task5A | Task::Task5B => {
+						Task::Task1 | Task::Task2 | Task::Task2Rotated | Task::Task4 | Task::Task5A | Task::Task5B | Task::Task7 => {
 							ui.menu_button("Object groups to display", |ui| {
 								let mut any_changed = false;
 								let _ = ui.button("Choose which groups of objects should be displayed in this task");
@@ -105,6 +105,31 @@ impl application::Application {
 							if any_changed {
 								self.data.init_task(&Task::Task6, self.chosen_system, &self.planetary_systems, &self.active_groups);
 							}
+						}
+						Task::Task7 => {
+							ui.menu_button("Settings", |ui| {
+								ui.horizontal(|ui| {
+									ui.add(egui::DragValue::new(&mut self.data.task_7_data.speed).speed(0.1));
+									ui.label("Animation speed (years/second)");
+								});
+								ui.horizontal(|ui| {
+									ui.add(egui::DragValue::new(&mut self.data.task_7_data.points_per_orbit).speed(0.1));
+									ui.label("Points to keep per orbit of an object");
+								});
+							});
+							let stationary_object_index = self.data.task_7_data.stationary_object_index;
+							egui::ComboBox::from_id_source("Object to keep stationary")
+								.selected_text(&self.planetary_systems[self.chosen_system].objects[self.data.task_7_data.stationary_object_index].name)
+								.show_ui(ui, |ui: &mut egui::Ui| {
+									ui.style_mut().wrap = Some(false);
+									for (i, object) in self.planetary_systems[self.chosen_system].objects.iter().enumerate() {
+										ui.selectable_value(&mut self.data.task_7_data.stationary_object_index, i, &object.name);
+									}
+								});
+							if stationary_object_index != self.data.task_7_data.stationary_object_index {
+								self.data.init_task(&Task::Task7, self.chosen_system, &self.planetary_systems, &self.active_groups);
+							};
+							ui.label("Object to keep stationary: ");
 						}
 					}
 				});
