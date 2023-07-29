@@ -44,6 +44,13 @@ impl Task {
 			Self::Task4 | Self::Task5B | Self::Task6 => false,
 		}
 	}
+
+	pub fn should_request_repaint(&self) -> bool {
+		match *self {
+			Self::Task4 | Self::Task5B => true,
+			Self::Task1 | Self::Task2 | Self::Task2Rotated | Self::Task5A | Self::Task6 => false,
+		}
+	}
 }
 
 impl Display for Task {

@@ -116,6 +116,8 @@ impl eframe::App for Application {
 		if !self.chosen_task.render_after_top_panel() {
 			self.data.top_panel_bottom = self.render_top_panel(ctx).response.rect.max.y;
 		}
-		ctx.request_repaint();
+		if self.chosen_task.should_request_repaint() {
+			ctx.request_repaint();
+		}
 	}
 }
