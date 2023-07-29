@@ -96,14 +96,6 @@ impl eframe::App for Application {
 		let input = self.get_input(ctx);
 		self.handle_input(input);
 		self.render_loaded_systems_window(ctx);
-		/*match self.chosen_task {
-			Task::Task1 | Task::Task2 | Task::Task2Rotated => ctx.tessellation_options_mut(|tess_options| {
-				tess_options.feathering = true;
-			}),
-			Task::Task4 => ctx.tessellation_options_mut(|tess_options| {
-				tess_options.feathering = false;
-			}),
-		}*/
 		if self.chosen_task.render_after_top_panel() {
 			self.data.top_panel_bottom = self.render_top_panel(ctx).response.rect.max.y;
 		}
@@ -114,6 +106,12 @@ impl eframe::App for Application {
 			Task::Task4 => self.render_task_4(ctx),
 			Task::Task5A => self.render_task_5a(ctx),
 			Task::Task5B => self.render_task_5b(ctx),
+			Task::Task6 => {
+				let screen_rect = ctx.input(|i| i.screen_rect);
+				self.data.task_6_data.screen_height = (screen_rect.max.y - screen_rect.min.y).abs() as f64;
+				self.data.task_6_data.screen_width = (screen_rect.max.x - screen_rect.min.x).abs() as f64;
+				self.render_task_6(ctx);
+			}
 		}
 		if !self.chosen_task.render_after_top_panel() {
 			self.data.top_panel_bottom = self.render_top_panel(ctx).response.rect.max.y;

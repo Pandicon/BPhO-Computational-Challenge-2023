@@ -70,9 +70,9 @@ impl Task5BData {
 				continue;
 			}
 			let inclination = inclination * PI / 180.0;
-			let points_object = (0..=constants::TASK_4_STEPS)
+			let points_object = (0..=constants::TASK_5B_STEPS)
 				.map(|i| {
-					let theta = eframe::emath::remap(i as f64, 0.0..=(constants::TASK_4_STEPS as f64), 0.0..=TAU);
+					let theta = eframe::emath::remap(i as f64, 0.0..=(constants::TASK_5B_STEPS as f64), 0.0..=TAU);
 					pos(distance, eccentricity, inclination, theta)
 				})
 				.collect::<Vec<[f64; 3]>>();
@@ -188,7 +188,7 @@ impl Task5BData {
 				return None;
 			}
 		}
-		return Self::floor_in_array(arr, mid + 1, high, val);
+		Self::floor_in_array(arr, mid + 1, high, val)
 	}
 }
 

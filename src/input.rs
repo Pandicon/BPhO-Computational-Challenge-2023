@@ -52,6 +52,11 @@ impl crate::application::Application {
 					self.data.task_5b_data.rotate_x = -90.0;
 				}
 			}
+			Task::Task6 => {
+				self.data.task_6_data.offset_x += input.dragged.x;
+				self.data.task_6_data.offset_y += input.dragged.y;
+				self.data.task_6_data.zoom_coefficient += input.zoom;
+			}
 		}
 	}
 

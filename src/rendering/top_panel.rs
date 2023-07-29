@@ -34,21 +34,27 @@ impl application::Application {
 							}
 						});
 					ui.label("Planetary system to use: ");
-					ui.menu_button("Object groups to display", |ui| {
-						let mut any_changed = false;
-						let _ = ui.button("Choose which groups of objects should be displayed in this task");
-						let mut key_value_pairs = Vec::new();
-						for (key, value) in self.active_groups[self.chosen_task.task_index()][self.chosen_system].iter_mut() {
-							key_value_pairs.push((key, value));
+
+					match self.chosen_task {
+						Task::Task1 | Task::Task2 | Task::Task2Rotated | Task::Task4 | Task::Task5A | Task::Task5B => {
+							ui.menu_button("Object groups to display", |ui| {
+								let mut any_changed = false;
+								let _ = ui.button("Choose which groups of objects should be displayed in this task");
+								let mut key_value_pairs = Vec::new();
+								for (key, value) in self.active_groups[self.chosen_task.task_index()][self.chosen_system].iter_mut() {
+									key_value_pairs.push((key, value));
+								}
+								key_value_pairs.sort_by(|a, b| a.0.cmp(b.0));
+								for (key, value) in key_value_pairs {
+									any_changed |= ui.checkbox(value, key).changed();
+								}
+								if any_changed {
+									self.data.init_task(&self.chosen_task, self.chosen_system, &self.planetary_systems, &self.active_groups);
+								}
+							});
 						}
-						key_value_pairs.sort_by(|a, b| a.0.cmp(b.0));
-						for (key, value) in key_value_pairs {
-							any_changed |= ui.checkbox(value, key).changed();
-						}
-						if any_changed {
-							self.data.init_task(&self.chosen_task, self.chosen_system, &self.planetary_systems, &self.active_groups);
-						}
-					});
+						Task::Task6 => {}
+					}
 
 					match self.chosen_task {
 						Task::Task1 | Task::Task2 | Task::Task2Rotated | Task::Task5A => {}
@@ -59,6 +65,46 @@ impl application::Application {
 						Task::Task5B => {
 							ui.add(egui::DragValue::new(&mut self.data.task_5b_data.speed).speed(0.1));
 							ui.label("Animation speed (years/second): ");
+						}
+						Task::Task6 => {
+							let mut any_changed = false;
+							ui.menu_button("Settings", |ui| {
+								ui.horizontal(|ui| {
+									any_changed |= ui.add(egui::Slider::new(&mut self.data.task_6_data.dt, 0.0..=f64::INFINITY).logarithmic(true)).changed();
+									ui.label("time step (years)");
+								});
+								ui.horizontal(|ui| {
+									any_changed |= ui.add(egui::Slider::new(&mut self.data.task_6_data.number_of_periods, 0.0..=f64::INFINITY).logarithmic(true)).changed();
+									ui.label("number of orbits of outer planet");
+								});
+								ui.horizontal(|ui| {
+									any_changed |= ui.add(egui::Slider::new(&mut self.data.task_6_data.line_width, 0.0..=f32::INFINITY).logarithmic(true)).changed();
+									ui.label("line width (pixels)");
+								});
+								ui.label("Objects (choose 2)");
+								for (i, object) in self.planetary_systems[self.chosen_system].objects.iter().enumerate() {
+									let mut checked = self.data.task_6_data.chosen_objects.contains(&i);
+									ui.add_enabled_ui(checked || self.data.task_6_data.chosen_objects.len() < 2, |ui| {
+										if ui.checkbox(&mut checked, &object.name).changed() {
+											any_changed = true;
+											if checked {
+												if self.data.task_6_data.chosen_objects.is_empty() || self.data.task_6_data.chosen_objects[0] < i {
+													self.data.task_6_data.chosen_objects.push(i);
+												} else {
+													self.data.task_6_data.chosen_objects.insert(0, i);
+												}
+											} else if self.data.task_6_data.chosen_objects[0] == i {
+												self.data.task_6_data.chosen_objects.remove(0);
+											} else {
+												self.data.task_6_data.chosen_objects.remove(1);
+											}
+										}
+									});
+								}
+							});
+							if any_changed {
+								self.data.init_task(&Task::Task6, self.chosen_system, &self.planetary_systems, &self.active_groups);
+							}
 						}
 					}
 				});

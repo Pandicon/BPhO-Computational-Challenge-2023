@@ -1,6 +1,6 @@
 use std::fmt::Display;
 
-pub const TASKS_NUM: usize = 6;
+pub const TASKS_NUM: usize = 7;
 #[derive(Eq, PartialEq, Clone, Copy)]
 pub enum Task {
 	Task1,
@@ -9,6 +9,7 @@ pub enum Task {
 	Task4,
 	Task5A,
 	Task5B,
+	Task6,
 }
 
 impl Task {
@@ -20,6 +21,7 @@ impl Task {
 			Self::Task4 => 3,
 			Self::Task5A => 4,
 			Self::Task5B => 5,
+			Self::Task6 => 6,
 		}
 	}
 
@@ -31,6 +33,7 @@ impl Task {
 			3 => Self::Task4,
 			4 => Self::Task5A,
 			5 => Self::Task5B,
+			6 => Self::Task6,
 			_ => todo!(),
 		}
 	}
@@ -38,7 +41,7 @@ impl Task {
 	pub fn render_after_top_panel(&self) -> bool {
 		match *self {
 			Self::Task1 | Self::Task2 | Self::Task2Rotated | Self::Task5A => true,
-			Self::Task4 | Self::Task5B => false,
+			Self::Task4 | Self::Task5B | Self::Task6 => false,
 		}
 	}
 }
@@ -52,6 +55,7 @@ impl Display for Task {
 			Self::Task4 => write!(f, "Task 4"),
 			Self::Task5A => write!(f, "Task 5a"),
 			Self::Task5B => write!(f, "Task 5b"),
+			Self::Task6 => write!(f, "Task 6"),
 		}
 	}
 }
