@@ -38,26 +38,26 @@ impl Application {
 					orbit_points.push([x, y]);
 				}
 				orbits.push(egui::plot::Line::new(orbit_points).color(colour).highlight(true).name(format!("[{}] {}", index, name.to_owned())));
-				for &(pos, colour) in &self.data.task_3_data.markers {
-					let circle_points: egui::plot::PlotPoints = (0..=MARKERS_CIRCLE_POINTS)
-						.map(|i| {
-							let t = eframe::emath::remap(i as f64, 0.0..=(MARKERS_CIRCLE_POINTS as f64), 0.0..=TAU);
-							let r = radius;
-							[r * t.cos() + pos[0], r * t.sin() + pos[1]]
-						})
-						.collect();
-					marker_lines.push(egui::plot::Line::new(circle_points).color(colour).highlight(true));
-					marker_lines.push(
-						egui::plot::Line::new(egui::plot::PlotPoints::new(vec![[pos[0] - radius, pos[1]], [pos[0] + radius, pos[1]]]))
-							.color(colour)
-							.highlight(true),
-					);
-					marker_lines.push(
-						egui::plot::Line::new(egui::plot::PlotPoints::new(vec![[pos[0], pos[1] - radius], [pos[0], pos[1] + radius]]))
-							.color(colour)
-							.highlight(true),
-					);
-				}
+			}
+			for &(pos, colour) in &self.data.task_3_data.markers {
+				let circle_points: egui::plot::PlotPoints = (0..=MARKERS_CIRCLE_POINTS)
+					.map(|i| {
+						let t = eframe::emath::remap(i as f64, 0.0..=(MARKERS_CIRCLE_POINTS as f64), 0.0..=TAU);
+						let r = radius;
+						[r * t.cos() + pos[0], r * t.sin() + pos[1]]
+					})
+					.collect();
+				marker_lines.push(egui::plot::Line::new(circle_points).color(colour).highlight(true));
+				marker_lines.push(
+					egui::plot::Line::new(egui::plot::PlotPoints::new(vec![[pos[0] - radius, pos[1]], [pos[0] + radius, pos[1]]]))
+						.color(colour)
+						.highlight(true),
+				);
+				marker_lines.push(
+					egui::plot::Line::new(egui::plot::PlotPoints::new(vec![[pos[0], pos[1] - radius], [pos[0], pos[1] + radius]]))
+						.color(colour)
+						.highlight(true),
+				);
 			}
 			let plot_bounds = plot
 				.show(ui, |plot_ui| {
