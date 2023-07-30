@@ -68,7 +68,7 @@ impl Data {
 			enums::Task::Task5B => self.init_task_5b(&planetary_systems[chosen_system], &active_groups[chosen_task.task_index()][chosen_system]),
 			enums::Task::Task5C => self.init_task_5c(&planetary_systems[chosen_system], &active_groups[chosen_task.task_index()][chosen_system]),
 			enums::Task::Task6 => self.init_task_6(&planetary_systems[chosen_system], &active_groups[chosen_task.task_index()][chosen_system]),
-			enums::Task::Task7 => self.init_task_7(&planetary_systems[chosen_system], &active_groups[chosen_task.task_index()][chosen_system]),
+			enums::Task::Task7 => self.init_task_7(&planetary_systems[chosen_system]),
 		}
 	}
 
@@ -112,7 +112,7 @@ impl Data {
 		self.task_6_data.init(planetary_system, active_groups);
 	}
 
-	fn init_task_7(&mut self, planetary_system: &structs::PlanetarySystem, active_groups: &HashMap<String, bool>) {
-		self.task_7_data.init(planetary_system, active_groups);
+	fn init_task_7(&mut self, planetary_system: &structs::PlanetarySystem) {
+		self.task_7_data.init(planetary_system);
 	}
 }

@@ -50,7 +50,7 @@ impl Task7Data {
 		}
 	}
 
-	pub fn init(&mut self, planetary_system: &structs::PlanetarySystem, active_groups: &HashMap<String, bool>) {
+	pub fn init(&mut self, planetary_system: &structs::PlanetarySystem) {
 		let mut points_all = Vec::new();
 		for object in &planetary_system.objects {
 			points_all.push((object.distance_au, object.period_years, object.eccentricity));
