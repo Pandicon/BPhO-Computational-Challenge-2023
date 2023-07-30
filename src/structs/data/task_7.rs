@@ -53,14 +53,11 @@ impl Task7Data {
 	pub fn init(&mut self, planetary_system: &structs::PlanetarySystem, active_groups: &HashMap<String, bool>) {
 		let mut points_all = Vec::new();
 		for object in &planetary_system.objects {
-			points_all.push((object.distance_au, object.period_years, object.eccentricity, *active_groups.get(&object.group).unwrap_or(&true)));
+			points_all.push((object.distance_au, object.period_years, object.eccentricity));
 		}
 		points_all.sort_by(|a, b| a.0.total_cmp(&b.0));
 		let mut time_vs_theta = Vec::new();
-		for &(distance, period, eccentricity, active) in &points_all {
-			if !active {
-				continue;
-			}
+		for &(distance, period, eccentricity) in &points_all {
 			if distance == 0.0 {
 				time_vs_theta.push(vec![[0.0, 0.0]]);
 				continue;
@@ -114,7 +111,8 @@ impl Task7Data {
 		let mut markers = Vec::new();
 		let mut positions = Vec::new();
 		for (index, (distance, period, eccentricity, inclination, colour, name, active)) in points_all.iter().enumerate() {
-			if !*active {
+			if !*active && index != self.stationary_object_index {
+				positions.push(None);
 				continue;
 			}
 			let (&distance, &period, &eccentricity, &inclination, &colour) = (distance, period, eccentricity, inclination, colour);

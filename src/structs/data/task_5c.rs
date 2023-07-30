@@ -62,21 +62,20 @@ impl Task5CData {
 		let mut points = Vec::new();
 		let mut time_vs_theta = Vec::new();
 		for &(distance, period, eccentricity, inclination, colour, active) in &points_all {
-			if !active {
-				continue;
+			if active {
+				let inclination = inclination * PI / 180.0;
+				let points_object = (0..=constants::TASK_5C_STEPS)
+					.map(|i| {
+						let theta = eframe::emath::remap(i as f64, 0.0..=(constants::TASK_5C_STEPS as f64), 0.0..=TAU);
+						pos(distance, eccentricity, inclination, theta)
+					})
+					.collect::<Vec<[f64; 3]>>();
+				points.push((points_object, colour));
 			}
 			if distance == 0.0 {
 				time_vs_theta.push(vec![[0.0, 0.0]]);
 				continue;
 			}
-			let inclination = inclination * PI / 180.0;
-			let points_object = (0..=constants::TASK_5C_STEPS)
-				.map(|i| {
-					let theta = eframe::emath::remap(i as f64, 0.0..=(constants::TASK_5C_STEPS as f64), 0.0..=TAU);
-					pos(distance, eccentricity, inclination, theta)
-				})
-				.collect::<Vec<[f64; 3]>>();
-			points.push((points_object, colour));
 
 			let mut theta = 0.0;
 			let mut t_integrand = 0.0;
