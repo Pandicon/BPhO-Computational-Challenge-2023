@@ -36,7 +36,7 @@ impl application::Application {
 					ui.label("Planetary system to use: ");
 
 					match self.chosen_task {
-						Task::Task1 | Task::Task2 | Task::Task2Rotated | Task::Task4 | Task::Task5A | Task::Task5B | Task::Task7 => {
+						Task::Task1 | Task::Task2 | Task::Task2Rotated | Task::Task3 | Task::Task4 | Task::Task5A | Task::Task5B | Task::Task7 => {
 							ui.menu_button("Object groups to display", |ui| {
 								let mut any_changed = false;
 								let _ = ui.button("Choose which groups of objects should be displayed in this task");
@@ -58,6 +58,10 @@ impl application::Application {
 
 					match self.chosen_task {
 						Task::Task1 | Task::Task2 | Task::Task2Rotated | Task::Task5A => {}
+						Task::Task3 => {
+							ui.add(egui::DragValue::new(&mut self.data.task_3_data.speed).speed(0.1));
+							ui.label("Animation speed (years/second): ");
+						}
 						Task::Task4 => {
 							ui.add(egui::DragValue::new(&mut self.data.task_4_data.speed).speed(0.1));
 							ui.label("Animation speed (years/second): ");

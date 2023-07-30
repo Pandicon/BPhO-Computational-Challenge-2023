@@ -103,6 +103,7 @@ impl eframe::App for Application {
 			Task::Task1 => self.render_task_1(ctx),
 			Task::Task2 => self.render_task_2(ctx),
 			Task::Task2Rotated => self.render_task_2_rotated(ctx),
+			Task::Task3 => self.render_task_3(ctx),
 			Task::Task4 => self.render_task_4(ctx),
 			Task::Task5A => self.render_task_5a(ctx),
 			Task::Task5B => self.render_task_5b(ctx),

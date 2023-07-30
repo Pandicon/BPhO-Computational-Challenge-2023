@@ -10,7 +10,6 @@ const LABELS_LEFT_MARGIN: f32 = 5.0;
 const LABELS_PADDING: f32 = 5.0;
 const LABELS_GAP: f32 = 5.0;
 const LABELS_CIRCLE_RADIUS: f32 = 5.0;
-const LABELS_CIRCLE_STROKE: f32 = 2.0;
 const LABELS_CIRCLE_LABEL_GAP: f32 = 7.0;
 const LABELS_RECT_STROKE_WIDTH: f32 = 2.0;
 const LIGHT_COLOUR: Color32 = Color32::from_rgba_premultiplied(255, 255, 255, 255);
