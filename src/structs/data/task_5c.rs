@@ -1,4 +1,7 @@
-use std::{collections::HashMap, f64::consts::TAU};
+use std::{
+	collections::HashMap,
+	f64::consts::{PI, TAU},
+};
 
 use eframe::{egui, epaint::Color32};
 
@@ -6,25 +9,39 @@ use crate::{constants, structs};
 
 const D_THETA: f64 = 0.001;
 
-pub struct Task5BData {
+pub struct Task5CData {
 	pub plot_width: f64,
-	/// [([(x, y)], colour)]
-	pub points: Vec<(Vec<[f64; 2]>, Color32)>,
-	/// [([(x, y)], colour, dotted, index, name)]
-	pub markers: Vec<([f64; 2], Color32, bool, usize, String)>,
-	pub speed: f64,
+	/// [([(x, y, z)], colour, stoke only, index, name)]
+	pub markers: Vec<([f64; 3], Color32, bool, usize, String)>,
+	/// [([(x, y, z)], colour)]
+	pub points: Vec<(Vec<[f64; 3]>, Color32)>,
 	pub time: f64,
+	pub speed: f64,
+	pub offset_x: f32,
+	pub offset_y: f32,
+	pub rotate_x: f32,
+	pub rotate_y: f32,
+	pub zoom_coefficient: f32,
+	pub labels_height: f32,
+	pub labels_width: f32,
 	pub time_theta: Vec<Vec<[f64; 2]>>,
 }
 
-impl Task5BData {
+impl Task5CData {
 	pub fn new() -> Self {
 		Self {
 			plot_width: 1.0,
-			points: Vec::new(),
 			markers: Vec::new(),
-			speed: 1.0,
+			points: Vec::new(),
 			time: 0.0,
+			speed: 1.0,
+			offset_x: 0.0,
+			offset_y: 0.0,
+			rotate_x: 0.0,
+			rotate_y: 0.0,
+			zoom_coefficient: 30.0,
+			labels_height: 100.0,
+			labels_width: 100.0,
 			time_theta: Vec::new(),
 		}
 	}
@@ -34,8 +51,9 @@ impl Task5BData {
 		for object in &planetary_system.objects {
 			points_all.push((
 				object.distance_au,
-				object.eccentricity,
 				object.period_years,
+				object.eccentricity,
+				object.inclination,
 				object.colour,
 				*active_groups.get(&object.group).unwrap_or(&true),
 			));
@@ -43,19 +61,22 @@ impl Task5BData {
 		points_all.sort_by(|a, b| a.0.total_cmp(&b.0));
 		let mut points = Vec::new();
 		let mut time_vs_theta = Vec::new();
-		for &(distance, eccentricity, period, colour, active) in &points_all {
-			if active {
-				let points_object = (0..=constants::TASK_2_STEPS)
-					.map(|i| {
-						let theta = eframe::emath::remap(i as f64, 0.0..=(constants::TASK_2_STEPS as f64), 0.0..=TAU);
-						let r = (distance * (1.0 - eccentricity.powi(2))) / (1.0 - eccentricity * theta.cos());
-						let x = r * theta.cos();
-						let y = r * theta.sin();
-						[x, y]
-					})
-					.collect::<Vec<[f64; 2]>>();
-				points.push((points_object, colour));
+		for &(distance, period, eccentricity, inclination, colour, active) in &points_all {
+			if !active {
+				continue;
 			}
+			if distance == 0.0 {
+				time_vs_theta.push(vec![[0.0, 0.0]]);
+				continue;
+			}
+			let inclination = inclination * PI / 180.0;
+			let points_object = (0..=constants::TASK_5C_STEPS)
+				.map(|i| {
+					let theta = eframe::emath::remap(i as f64, 0.0..=(constants::TASK_5C_STEPS as f64), 0.0..=TAU);
+					pos(distance, eccentricity, inclination, theta)
+				})
+				.collect::<Vec<[f64; 3]>>();
+			points.push((points_object, colour));
 
 			let mut theta = 0.0;
 			let mut t_integrand = 0.0;
@@ -81,7 +102,7 @@ impl Task5BData {
 			time_vs_theta_this_object.sort_by(|a, b| a[0].partial_cmp(&b[0]).unwrap());
 			time_vs_theta.push(time_vs_theta_this_object);
 		}
-		self.points = points;
+		self.points = points.clone();
 		self.time_theta = time_vs_theta;
 	}
 
@@ -94,6 +115,7 @@ impl Task5BData {
 				object.distance_au,
 				object.period_years,
 				object.eccentricity,
+				object.inclination,
 				object.colour,
 				object.name.clone(),
 				*active_groups.get(&object.group).unwrap_or(&true),
@@ -101,23 +123,25 @@ impl Task5BData {
 		}
 		points_all.sort_by(|a, b| a.0.total_cmp(&b.0));
 		let mut markers = Vec::new();
-		for (index, (distance, period, eccentricity, colour, name, active)) in points_all.iter().enumerate() {
+		for (index, (distance, period, eccentricity, inclination, colour, name, active)) in points_all.iter().enumerate() {
 			if !*active {
 				continue;
 			}
-			let (&distance, &period, &eccentricity, &colour) = (distance, period, eccentricity, colour);
+			let (&distance, &period, &eccentricity, &inclination, &colour) = (distance, period, eccentricity, inclination, colour);
+			let inclination = inclination * PI / 180.0;
 			let theta = TAU * if period != 0.0 { (self.time % period) / period } else { 0.0 };
-			markers.push((pos(distance, eccentricity, theta), colour, true, index, name.clone()));
+			markers.push((pos(distance, eccentricity, inclination, theta), colour, true, index, name.clone()));
 		}
-		for (index, (distance, period, eccentricity, colour, name, active)) in points_all.iter().enumerate() {
+		for (index, (distance, period, eccentricity, inclination, colour, name, active)) in points_all.iter().enumerate() {
 			if !*active {
 				continue;
 			}
-			let (&distance, &period, &eccentricity, &colour) = (distance, period, eccentricity, colour);
+			let (&distance, &period, &eccentricity, &inclination, &colour) = (distance, period, eccentricity, inclination, colour);
+			let inclination = inclination * PI / 180.0;
 			if period == 0.0 {
-				markers.push((pos(distance, eccentricity, 0.0), colour, false, index, name.clone()));
+				markers.push((pos(distance, eccentricity, inclination, 0.0), colour, false, index, name.clone()));
 			} else if let Some(theta) = self.angle_from_time(index, self.time % period) {
-				markers.push((pos(distance, eccentricity, theta), colour, false, index, name.clone()));
+				markers.push((pos(distance, eccentricity, inclination, theta), colour, false, index, name.clone()));
 			}
 		}
 		self.markers = markers;
@@ -168,9 +192,9 @@ impl Task5BData {
 	}
 }
 
-fn pos(distance: f64, eccentricity: f64, theta: f64) -> [f64; 2] {
+fn pos(distance: f64, eccentricity: f64, inclination: f64, theta: f64) -> [f64; 3] {
 	let r = (distance * (1.0 - eccentricity.powi(2))) / (1.0 - eccentricity * theta.cos());
 	let x = r * theta.cos();
 	let y = r * theta.sin();
-	[x, y]
+	[x * inclination.cos(), y, x * inclination.sin()]
 }

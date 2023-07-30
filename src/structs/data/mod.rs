@@ -5,6 +5,7 @@ pub mod task_3;
 pub mod task_4;
 pub mod task_5a;
 pub mod task_5b;
+pub mod task_5c;
 pub mod task_6;
 pub mod task_7;
 
@@ -15,6 +16,7 @@ use task_3::*;
 use task_4::*;
 use task_5a::*;
 use task_5b::*;
+use task_5c::*;
 use task_6::*;
 use task_7::*;
 
@@ -32,6 +34,7 @@ pub struct Data {
 	pub task_4_data: Task4Data,
 	pub task_5a_data: Task5AData,
 	pub task_5b_data: Task5BData,
+	pub task_5c_data: Task5CData,
 	pub task_6_data: Task6Data,
 	pub task_7_data: Task7Data,
 }
@@ -48,6 +51,7 @@ impl Data {
 			task_4_data: Task4Data::new(),
 			task_5a_data: Task5AData::new(),
 			task_5b_data: Task5BData::new(),
+			task_5c_data: Task5CData::new(),
 			task_6_data: Task6Data::new(),
 			task_7_data: Task7Data::new(),
 		}
@@ -62,6 +66,7 @@ impl Data {
 			enums::Task::Task4 => self.init_task_4(&planetary_systems[chosen_system], &active_groups[chosen_task.task_index()][chosen_system]),
 			enums::Task::Task5A => self.init_task_5a(&planetary_systems[chosen_system], &active_groups[chosen_task.task_index()][chosen_system]),
 			enums::Task::Task5B => self.init_task_5b(&planetary_systems[chosen_system], &active_groups[chosen_task.task_index()][chosen_system]),
+			enums::Task::Task5C => self.init_task_5c(&planetary_systems[chosen_system], &active_groups[chosen_task.task_index()][chosen_system]),
 			enums::Task::Task6 => self.init_task_6(&planetary_systems[chosen_system], &active_groups[chosen_task.task_index()][chosen_system]),
 			enums::Task::Task7 => self.init_task_7(&planetary_systems[chosen_system], &active_groups[chosen_task.task_index()][chosen_system]),
 		}
@@ -97,6 +102,10 @@ impl Data {
 
 	fn init_task_5b(&mut self, planetary_system: &structs::PlanetarySystem, active_groups: &HashMap<String, bool>) {
 		self.task_5b_data.init(planetary_system, active_groups);
+	}
+
+	fn init_task_5c(&mut self, planetary_system: &structs::PlanetarySystem, active_groups: &HashMap<String, bool>) {
+		self.task_5c_data.init(planetary_system, active_groups);
 	}
 
 	fn init_task_6(&mut self, planetary_system: &structs::PlanetarySystem, active_groups: &HashMap<String, bool>) {

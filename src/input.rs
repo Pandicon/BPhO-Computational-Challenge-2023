@@ -23,7 +23,7 @@ impl Default for Input {
 impl crate::application::Application {
 	pub fn handle_input(&mut self, input: Input) {
 		match self.chosen_task {
-			Task::Task1 | Task::Task2 | Task::Task2Rotated | Task::Task3 | Task::Task5A => {}
+			Task::Task1 | Task::Task2 | Task::Task2Rotated | Task::Task3 | Task::Task5A | Task::Task5B => {}
 			Task::Task4 => {
 				self.data.task_4_data.offset_x += input.dragged.x;
 				self.data.task_4_data.offset_y += input.dragged.y;
@@ -38,18 +38,18 @@ impl crate::application::Application {
 					self.data.task_4_data.rotate_x = -90.0;
 				}
 			}
-			Task::Task5B => {
-				self.data.task_5b_data.offset_x += input.dragged.x;
-				self.data.task_5b_data.offset_y += input.dragged.y;
-				self.data.task_5b_data.rotate_x += input.dragged_rotate.y;
-				self.data.task_5b_data.rotate_y += input.dragged_rotate.x;
-				self.data.task_5b_data.zoom_coefficient += input.zoom;
-				self.data.task_5b_data.speed += input.alt_scroll as f64;
+			Task::Task5C => {
+				self.data.task_5c_data.offset_x += input.dragged.x;
+				self.data.task_5c_data.offset_y += input.dragged.y;
+				self.data.task_5c_data.rotate_x += input.dragged_rotate.y;
+				self.data.task_5c_data.rotate_y += input.dragged_rotate.x;
+				self.data.task_5c_data.zoom_coefficient += input.zoom;
+				self.data.task_5c_data.speed += input.alt_scroll as f64;
 
-				if self.data.task_5b_data.rotate_x > 90.0 {
-					self.data.task_5b_data.rotate_x = 90.0;
-				} else if self.data.task_5b_data.rotate_x < -90.0 {
-					self.data.task_5b_data.rotate_x = -90.0;
+				if self.data.task_5c_data.rotate_x > 90.0 {
+					self.data.task_5c_data.rotate_x = 90.0;
+				} else if self.data.task_5c_data.rotate_x < -90.0 {
+					self.data.task_5c_data.rotate_x = -90.0;
 				}
 			}
 			Task::Task6 => {

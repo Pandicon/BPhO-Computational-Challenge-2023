@@ -107,6 +107,7 @@ impl eframe::App for Application {
 			Task::Task4 => self.render_task_4(ctx),
 			Task::Task5A => self.render_task_5a(ctx),
 			Task::Task5B => self.render_task_5b(ctx),
+			Task::Task5C => self.render_task_5c(ctx),
 			Task::Task6 => {
 				let screen_rect = ctx.input(|i| i.screen_rect);
 				self.data.task_6_data.screen_height = (screen_rect.max.y - screen_rect.min.y).abs() as f64;
