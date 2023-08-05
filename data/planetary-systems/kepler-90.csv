@@ -1,0 +1,10 @@
+name,distance_km,eccentricity,inclination,mean_longitude,longitude_of_perihelion,longitude_of_ascending_node,period_years,group,colour
+Kepler 90,0,0,0,0,0,0,0,Star,F2EBB7FF
+Kepler 90b,11070400,0,89.4,0,0,0,0.0191872717,Planet,9C694BFF
+Kepler 90c,13314400,0,89.68,0,0,0,0.0238723477,Planet,8B502FFF
+Kepler 90i,16007200,0,89.2,0,0,0,0.0395595346,Planet,C2A973FF
+Kepler 90d,47872000,0,89.71,0,0,0,0.163550089,Planet,A5A4A2FF
+Kepler 90e,62832000,0,89.79,0,0,0,0.251715619,Planet,A0B0B1FF
+Kepler 90f,71808000,0.01,89.77,0,0,0,0.341996988,Planet,9D8559FF
+Kepler 90g,106216000,0.049,89.92,0,0,0,0.576610459,Planet,B68E7EFF
+Kepler 90h,151096000,0.011,89.927,0,0,0,0.907872936,Planet,99903EFF
