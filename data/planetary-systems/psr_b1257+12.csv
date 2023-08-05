@@ -1,0 +1,5 @@
+name,distance_km,eccentricity,inclination,mean_longitude,longitude_of_perihelion,longitude_of_ascending_node,period_years,group,colour
+Lich (PSR B1257+12),0,0,0,0,0,0,0,Star,FFFFFFFF
+Draugr (A),28424000,0,50,0,0,0,0.06916358658,Planet,B6B6B7FF
+Poltergeist (B),53856000,0.0186,53,0,0,0,0.1821817933,Planet,5A4D3EFF
+Phobetor (C),68816000,0.0252,47,0,0,0,0.2688881588,Planet,8A837CFF
