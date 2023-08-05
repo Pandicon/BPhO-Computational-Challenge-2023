@@ -17,23 +17,45 @@ impl application::Application {
 						.selected_text(format!("{}", self.chosen_task))
 						.show_ui(ui, |ui: &mut egui::Ui| {
 							ui.style_mut().wrap = Some(false);
+							ui.set_max_height(175.0);
+							ui.set_min_width(self.data.top_panel_task_to_show_choosing_width);
 
+							let mut max_width = 0.0;
 							for task_i in 0..crate::enums::TASKS_NUM {
 								let task = Task::from_index(task_i);
-								ui.selectable_value(&mut self.chosen_task, task, format!("{}", task));
+								let rect = ui.selectable_value(&mut self.chosen_task, task, format!("{}", task)).rect;
+								let width = rect.max.x - rect.min.x;
+								if width > max_width {
+									max_width = width;
+								}
 							}
+							self.data.top_panel_task_to_show_choosing_width = max_width;
 						});
 					ui.label("Task to show: ");
 
+					let chosen_system = self.chosen_system;
 					egui::ComboBox::from_id_source("Planetary system to use: ")
 						.selected_text(&self.planetary_systems[self.chosen_system].name)
 						.show_ui(ui, |ui: &mut egui::Ui| {
 							ui.style_mut().wrap = Some(false);
+							ui.set_min_width(self.data.top_panel_planetary_system_choosing_width);
+
+							let mut max_width = 0.0;
 							for (i, system) in self.planetary_systems.iter().enumerate() {
-								ui.selectable_value(&mut self.chosen_system, i, &system.name);
+								let rect = ui.selectable_value(&mut self.chosen_system, i, &system.name).rect;
+								let width = rect.max.x - rect.min.x;
+								if width > max_width {
+									max_width = width;
+								}
 							}
+							self.data.top_panel_planetary_system_choosing_width = max_width;
 						});
 					ui.label("Planetary system to use: ");
+					if self.chosen_system != chosen_system {
+						for task_i in 0..crate::enums::TASKS_NUM {
+							self.data.init_task_by_id(task_i, self.chosen_system, &self.planetary_systems, &self.active_groups);
+						}
+					}
 
 					match self.chosen_task {
 						Task::Task1 | Task::Task2 | Task::Task2Rotated | Task::Task3 | Task::Task4 | Task::Task5A | Task::Task5B | Task::Task5C | Task::Task7 => {
