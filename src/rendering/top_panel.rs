@@ -52,6 +52,11 @@ impl application::Application {
 						});
 					ui.label("Planetary system to use: ");
 					if self.chosen_system != chosen_system {
+						self.data.task_6_data.chosen_objects = Vec::new();
+						self.data.task_6_data.last_valid_pair = [0, 0];
+						self.data.task_6_data.labels = Vec::new();
+						self.data.task_6_data.orbit_points = Vec::new();
+						self.data.task_6_data.spirograph_line_points = Vec::new();
 						for task_i in 0..crate::enums::TASKS_NUM {
 							self.data.init_task_by_id(task_i, self.chosen_system, &self.planetary_systems, &self.active_groups);
 						}
