@@ -57,6 +57,7 @@ impl application::Application {
 						self.data.task_6_data.labels = Vec::new();
 						self.data.task_6_data.orbit_points = Vec::new();
 						self.data.task_6_data.spirograph_line_points = Vec::new();
+						self.data.task_7_data.stationary_object_index = 0;
 						for task_i in 0..crate::enums::TASKS_NUM {
 							self.data.init_task_by_id(task_i, self.chosen_system, &self.planetary_systems, &self.active_groups);
 						}
