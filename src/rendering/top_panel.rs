@@ -7,7 +7,7 @@ impl application::Application {
 		egui::TopBottomPanel::top("top_panel").show(ctx, |ui| {
 			egui::menu::bar(ui, |ui| {
 				ui.with_layout(egui::Layout::left_to_right(egui::Align::Center), |ui| {
-					ui.label("BPhO Computation Challenge 2023");
+					ui.label("BPhO Computational Challenge 2023");
 				});
 				ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
 					if ui.button("Show loaded planetary systems").clicked() {
