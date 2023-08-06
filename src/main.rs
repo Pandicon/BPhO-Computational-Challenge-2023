@@ -9,6 +9,7 @@ fn main() {
 	let native_options = eframe::NativeOptions {
 		maximized: true,
 		resizable: true,
+		icon_data: Some(eframe::IconData::try_from_png_bytes(&std::fs::read("./icon.png").expect("Icon file not found!")).expect("Icon file is not png!")),
 		..Default::default()
 	};
 
